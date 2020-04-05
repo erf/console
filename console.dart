@@ -1,20 +1,49 @@
 import 'dart:io';
 
 class Console {
-  Console() {
+  Console() {}
+
+  set rawMode(bool rawMode) {
+    if (rawMode) {
+      stdin.echoMode = false;
+      stdin.lineMode = false;
+    } else {
+      stdin.echoMode = true;
+      stdin.lineMode = true;
+    }
+  }
+
+  int get cols {
+    return stdout.terminalColumns;
+  }
+
+  int get rows {
+    return stdout.terminalLines;
+  }
+
+  void setColor(int color) {
+    stdout.write("\x1b[38;5;${color}m");
+  }
+
+  void write(Object object) {
+    stdout.write(object);
+  }
+
+  Stream inputStream() {
+    return stdin.asBroadcastStream();
   }
 }
 
 void main() {
-  stdin.echoMode = false;
-  stdin.lineMode = false;
+  final console = Console();
+  console.rawMode = true;
 
-  stdin.listen((codes) {
+  console.inputStream().listen((codes) {
     String string = String.fromCharCodes(codes);
     stdout.write(string);
     stdout.write(codes);
   });
 
-  stdout.write("\x1b[38;5;${1}m");
-  stdout.write("hello world");
+  console.setColor(6);
+  console.write("[${console.cols}, ${console.rows}]");
 }
