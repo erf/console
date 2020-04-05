@@ -4,15 +4,15 @@ import 'dart:async';
 
 import 'package:console/console.dart';
 
-final console = Console();
-final random = Random();
+final c = Console();
+final r = Random();
 
-final int rows = console.rows;
-final int cols = console.cols;
+final int rows = c.rows;
+final int cols = c.cols;
 final int size = rows * cols;
 
 final temp = List<bool>(size);
-final data = List<bool>.generate(size, (i) => random.nextBool(), growable: false);
+final data = List<bool>.generate(size, (i) => r.nextBool(), growable: false);
 
 bool done = false;
 
@@ -28,20 +28,20 @@ final neighbors = [
 ];
 
 void draw() {
-  console.color_bg = 0;
-  console.color_fg = 6;
+  c.color_bg = 0;
+  c.color_fg = 6;
 
-  console.clear();
+  c.clear();
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       var index = row * rows + col;
-      console.append(data[index] ? '#' : ' ');
+      c.append(data[index] ? '#' : ' ');
     }
-    console.append('\n');
+    c.append('\n');
   }
 
-  console.apply();
+  c.apply();
 }
 
 int numLiveNeighbors(int row, int col) {
@@ -79,16 +79,16 @@ void update() {
 }
 
 void resetConsole() {
-  console.clear();
-  console.color_reset();
-  console.rawMode = false;
-  console.cursor = true;
-  console.apply();
+  c.clear();
+  c.color_reset();
+  c.rawMode = false;
+  c.cursor = true;
+  c.apply();
 }
 
 void crash(String message) {
   resetConsole();
-  console.write(message);
+  c.write(message);
   exit(1);
 }
 
@@ -99,10 +99,10 @@ void quit() {
 
 void main(List<String> arguments) {
   try {
-    console.rawMode = true;
-    console.cursor = false;
+    c.rawMode = true;
+    c.cursor = false;
 
-    console.input.listen((codes) {
+    c.input.listen((codes) {
       done = true;
     });
 

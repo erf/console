@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:console/console.dart';
 
-void quit(Console c) {
+final c = Console();
+
+void quit() {
   c.clear();
   c.color_reset();
   c.rawMode = false;
@@ -12,7 +14,6 @@ void quit(Console c) {
 }
 
 void main() {
-  final c = Console();
   c.rawMode = true;
   c.cursor = false;
   c.apply();
@@ -20,7 +21,7 @@ void main() {
   c.input.listen((codes) {
     final str = String.fromCharCodes(codes);
     if (str == 'q') {
-      quit(c);
+      quit();
     }
   });
 
