@@ -2,7 +2,7 @@
 
 Using vt-100 and Dart.io
 
-Mostly for myself to learn and have fun with
+Mostly for myself to learn and have fun with similar to [sta](https://github.com/erf/sta)
 
 ## Features
 
