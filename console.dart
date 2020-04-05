@@ -3,8 +3,6 @@ import 'dart:io';
 class Console {
   final buffer = StringBuffer();
 
-  Console() {}
-
   void set rawMode(bool rawMode) {
     if (rawMode) {
       stdin.echoMode = false;
@@ -23,16 +21,13 @@ class Console {
     return stdout.terminalLines;
   }
 
-  void set setColor(int color) {
-    stdout.write("\x1b[38;5;${color}m");
-  }
-
-  void write(Object object) {
-    stdout.write(object);
-  }
-
   Stream get input {
     return stdin.asBroadcastStream();
+  }
+
+  // should use append / apply  in most cases
+  void write(Object object) {
+    stdout.write(object);
   }
 
   void append(String str) {
@@ -47,7 +42,7 @@ class Console {
     append("\x1b[${row};${col}H");
   }
 
-  void cursor(bool visible) {
+  void set cursor(bool visible) {
     if (visible)
       append("\x1b[?25h");
     else
@@ -59,11 +54,11 @@ class Console {
     append("\x1b[J"); // erase down
   }
 
-  void color_fg(int color) {
+  void set color_fg(int color) {
     append("\x1b[38;5;${color}m");
   }
 
-  void color_bg(int color) {
+  void set color_bg(int color) {
     append("\x1b[48;5;${color}m");
   }
 
@@ -87,6 +82,9 @@ void main() {
     stdout.write(codes);
   });
 
-  c.setColor = 6;
-  c.write("[${c.cols}, ${c.rows}]");
+  c.color_fg = 1;
+  c.append("hello\n");
+  c.color_fg = 6;
+  c.append("[${c.cols}, ${c.rows}]");
+  c.apply();
 }
