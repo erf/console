@@ -4,79 +4,57 @@ import 'dart:math';
 
 import 'package:console/console.dart';
 
+const int ROWS = 9;
+const int COLS = 24;
+
 final c = Console();
-
-int MAX_ROWS = 9;
-int MAX_COLS = 24;
-
-class Pos {
-  int x;
-  int y;
-
-  Pos(this.x, this.y);
-}
 
 int rows = c.rows;
 int cols = c.cols;
-List<Pos> snake = [];
-Pos food;
-Pos dir;
+List<Point> snake = [];
+Point food;
+Point dir;
 bool quit = false;
 bool game_over = false;
 bool paused = false;
+final r = Random();
 
-Pos r_inside() {
-  final r = Random();
-
-  final x = r.nextInt(MAX_COLS - 2) + 2;
-  final y = r.nextInt(MAX_ROWS - 2) + 2;
-  return Pos(x, y);
+extension on Point {
+  Point get zero => Point(0, 0);
 }
 
-Pos add(Pos p1, Pos p2) {
-  return Pos(p1.x + p2.x, p1.y + p2.y);
+Point r_inside() {
+  final x = r.nextInt(COLS - 2) + 1;
+  final y = r.nextInt(ROWS - 2) + 1;
+  return Point(x, y);
 }
 
-bool is_zero(Pos p) {
+bool is_zero(Point p) {
   return p.x == 0 && p.y == 0;
 }
 
-bool is_same(Pos p1, Pos p2) {
-  return (p1.x == p2.x && p1.y == p2.y);
-}
-
-Pos create_food() {
-  Pos p;
+Point create_food() {
   while (true) {
-    var food_collide = false;
-    p = r_inside();
-    for (var i = 0; i < snake.length; i++) {
-      if (is_same(snake[i], p)) {
-        food_collide = true;
-        break;
-      }
-    }
-    if (food_collide) {
-      break;
+    final randomPoint = r_inside();
+    final snakePoint = snake.firstWhere((el) => el == randomPoint, orElse: () => null);
+    if (snakePoint == null) {
+      return randomPoint;
     }
   }
-  return p;
 }
 
 void update() {
   // update snake tail
   for (var i = snake.length - 1; i > 0; i--) {
     snake[i] = snake[i - 1];
-    //snake.add(snake.last);
   }
 
   // update snake head
-  snake[0].x += dir.x;
-  snake[0].y += dir.y;
+  snake.first += dir;
 
   // check if snake hit wall
-  final p = snake[0];
-  if (p.x == 0 || p.y == 0 || p.y == MAX_ROWS - 1 || p.x == MAX_COLS - 1) {
+  final p = snake.first;
+  if (p.x == 0 || p.y == 0 || p.y == ROWS - 1 || p.x == COLS - 1) {
     game_over = true;
   }
 
@@ -93,10 +71,8 @@ void update() {
   }
 
   // check if food was eaten and create new food
-  if (is_same(p, food)) {
+  if (p == food) {
     // more snake
-    //++snake_len;
-    //snake[snake_len - 1] = snake[snake_len - 2];
     snake.add(snake.last);
 
     // create until food is not on snake
@@ -112,9 +88,9 @@ void draw() {
   // draw wall
   c.color_fg = 7;
   c.color_bg = 238;
-  for (var row = 0; row < MAX_ROWS; row++) {
-    for (var col = 0; col < MAX_COLS; col++) {
-      if (row == 0 || col == 0 || row == MAX_ROWS - 1 || col == MAX_COLS - 1) {
+  for (var row = 0; row < ROWS; row++) {
+    for (var col = 0; col < COLS; col++) {
+      if (row == 0 || col == 0 || row == ROWS - 1 || col == COLS - 1) {
         c.append('#');
       } else {
         c.append(' ');
@@ -148,7 +124,7 @@ void draw() {
   final instructions = ['hjkl - move', 'p    - pause', 'r    - restart', 'q    - quit'];
 
   for (var i = 0; i < 4; i++) {
-    c.move(MAX_ROWS + 2 + i, 1);
+    c.move(ROWS + 2 + i, 1);
     c.append(instructions[i]);
   }
 
@@ -184,29 +160,29 @@ void handleInput(codes) {
       break;
 
     case 'h':
-      final d = Pos(-1, 0);
-      if (!is_zero(add(dir, d))) {
+      final d = Point(-1, 0);
+      if (!is_zero(dir + d)) {
         dir = d;
       }
       break;
 
     case 'j':
-      final d = Pos(0, 1);
-      if (!is_zero(add(dir, d))) {
+      final d = Point(0, 1);
+      if (!is_zero(dir + d)) {
         dir = d;
       }
       break;
 
     case 'k':
-      final d = Pos(0, -1);
-      if (!is_zero(add(dir, d))) {
+      final d = Point(0, -1);
+      if (!is_zero(dir + d)) {
         dir = d;
       }
       break;
 
     case 'l':
-      final d = Pos(1, 0);
-      if (!is_zero(add(dir, d))) {
+      final d = Point(1, 0);
+      if (!is_zero(dir + d)) {
         dir = d;
       }
       break;
@@ -223,8 +199,8 @@ void handleUpdate(Timer timer) {
 
 void init_game() {
   snake.clear();
-  snake.add(Pos((MAX_COLS / 2).round(), (MAX_ROWS / 2).round()));
-  dir = Pos(1, 0);
+  snake.add(Point((COLS / 2).round(), (ROWS / 2).round()));
+  dir = Point(1, 0);
   food = create_food();
 }
 
