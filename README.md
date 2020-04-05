@@ -45,3 +45,9 @@ void main() {
 }
 ```
 
+## Tests
+
+Run tests with:
+```
+pub run test
+```
