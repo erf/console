@@ -20,6 +20,7 @@ Mostly for myself to learn and have fun with
 
 - simple
 - game of life
+- snake
 
 ## Usage
 
