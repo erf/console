@@ -19,10 +19,6 @@ bool game_over = false;
 bool paused = false;
 final r = Random();
 
-extension on Point {
-  Point get zero => Point(0, 0);
-}
-
 Point r_inside() {
   final x = r.nextInt(COLS - 2) + 1;
   final y = r.nextInt(ROWS - 2) + 1;
@@ -81,7 +77,6 @@ void update() {
 }
 
 void draw() {
-  c.cursor = false;
   c.color_bg = 0;
   c.clear();
 
@@ -150,13 +145,11 @@ void handleInput(codes) {
         return;
       }
       paused = !paused;
-      //alert(1);
       break;
 
     case 'r':
       init_game();
       game_over = false;
-      //alert(1);
       break;
 
     case 'h':
@@ -205,6 +198,7 @@ void init_game() {
 }
 
 void main() {
+  c.cursor = false;
   c.rawMode = true;
   init_game();
   Timer.periodic(Duration(milliseconds: 150), handleUpdate);
