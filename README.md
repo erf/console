@@ -1,10 +1,10 @@
-# Minimal lib for interactive console apps in dart
+# A library for interactive console apps in Dart
 
-Abstract away some vt-100 escape codes and dart.io
+Using vt-100 and Dart.io
 
 Mostly for myself to learn and have fun with
 
-Features
+## Features
 
 - raw mode
 - cols and rows
@@ -16,7 +16,32 @@ Features
 - bg / fg / reset colors
 
 
-Example
+## Examples
 
+- simple
 - game of life
+
+## Usage
+
+A simple usage example:
+
+```dart
+import 'package:console/console.dart';
+
+void main() {
+  final c = Console();
+  c.rawMode = true;
+
+  c.input.listen((codes) {
+    String string = String.fromCharCodes(codes);
+    stdout.write(codes);
+  });
+
+  c.color_fg = 1;
+  c.append("hello\n");
+  c.color_fg = 6;
+  c.append("[${c.cols}, ${c.rows}]");
+  c.apply();
+}
+```
 

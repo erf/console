@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:async';
 
-import 'console.dart';
+import 'package:console/console.dart';
 
 final console = Console();
 final random = Random();
@@ -94,7 +94,10 @@ void input() {
 
 void resetConsole() {
   console.clear();
+  console.color_reset();
   console.rawMode = false;
+  console.cursor = true;
+  console.apply();
 }
 
 void crash(String message) {

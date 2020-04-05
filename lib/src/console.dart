@@ -36,6 +36,7 @@ class Console {
 
   void apply() {
     stdout.write(buffer);
+    buffer.clear();
   }
 
   void move(int row, int col) {
@@ -70,21 +71,4 @@ class Console {
 //void on_resize(resize_handler handler) {
 //signal(SIGWINCH, handler);
 //}
-}
-
-void main() {
-  final c = Console();
-  c.rawMode = true;
-
-  c.input.listen((codes) {
-    String string = String.fromCharCodes(codes);
-    stdout.write(string);
-    stdout.write(codes);
-  });
-
-  c.color_fg = 1;
-  c.append("hello\n");
-  c.color_fg = 6;
-  c.append("[${c.cols}, ${c.rows}]");
-  c.apply();
 }
