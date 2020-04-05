@@ -78,20 +78,6 @@ void update() {
   data.setAll(0, temp);
 }
 
-/*
-void input() {
-  final key = console.readKey();
-  if (key.isControl) {
-    switch (key.controlChar) {
-      case ControlCharacter.escape:
-        done = true;
-        break;
-      default:
-    }
-  }
-}
-   */
-
 void resetConsole() {
   console.clear();
   console.color_reset();

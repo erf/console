@@ -3,7 +3,7 @@ import 'dart:io';
 class Console {
   final buffer = StringBuffer();
 
-  void set rawMode(bool rawMode) {
+  set rawMode(bool rawMode) {
     if (rawMode) {
       stdin.echoMode = false;
       stdin.lineMode = false;
@@ -40,35 +40,33 @@ class Console {
   }
 
   void move(int row, int col) {
-    append("\x1b[${row};${col}H");
+    append('\x1b[${row};${col}H');
   }
 
-  void set cursor(bool visible) {
-    if (visible)
-      append("\x1b[?25h");
-    else
-      append("\x1b[?25l");
+  set cursor(bool visible) {
+    if (visible) {
+      append('\x1b[?25h');
+    } else {
+      append('\x1b[?25l');
+    }
   }
 
   void clear() {
-    append("\x1b[H"); // Go home
-    append("\x1b[J"); // erase down
+    append('\x1b[H'); // Go home
+    append('\x1b[J'); // erase down
   }
 
-  void set color_fg(int color) {
-    append("\x1b[38;5;${color}m");
+  set color_fg(int color) {
+    append('\x1b[38;5;${color}m');
   }
 
-  void set color_bg(int color) {
-    append("\x1b[48;5;${color}m");
+  set color_bg(int color) {
+    append('\x1b[48;5;${color}m');
   }
 
   void color_reset() {
-    append("\x1b[0m");
+    append('\x1b[0m');
   }
 
 // TODO resize callback using SIGWINCH and ffi
-//void on_resize(resize_handler handler) {
-//signal(SIGWINCH, handler);
-//}
 }
