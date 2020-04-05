@@ -19,22 +19,22 @@ bool game_over = false;
 bool paused = false;
 final r = Random();
 
-Point r_inside() {
+Point randomPoint() {
   final x = r.nextInt(COLS - 2) + 1;
   final y = r.nextInt(ROWS - 2) + 1;
   return Point(x, y);
 }
 
-bool is_zero(Point p) {
+bool isZero(Point p) {
   return p.x == 0 && p.y == 0;
 }
 
-Point create_food() {
+Point getFood() {
   while (true) {
-    final randomPoint = r_inside();
-    final snakePoint = snake.firstWhere((el) => el == randomPoint, orElse: () => null);
-    if (snakePoint == null) {
-      return randomPoint;
+    final r = randomPoint();
+    final p = snake.firstWhere((el) => el == r, orElse: () => null);
+    if (p == null) {
+      return r;
     }
   }
 }
@@ -72,7 +72,7 @@ void update() {
     snake.add(snake.last);
 
     // create until food is not on snake
-    food = create_food();
+    food = getFood();
   }
 }
 
@@ -126,7 +126,7 @@ void draw() {
   c.apply();
 }
 
-void handleInput(codes) {
+void input(codes) {
   final str = String.fromCharCodes(codes);
 
   switch (str) {
@@ -148,41 +148,41 @@ void handleInput(codes) {
       break;
 
     case 'r':
-      init_game();
+      init();
       game_over = false;
       break;
 
     case 'h':
       final d = Point(-1, 0);
-      if (!is_zero(dir + d)) {
+      if (!isZero(dir + d)) {
         dir = d;
       }
       break;
 
     case 'j':
       final d = Point(0, 1);
-      if (!is_zero(dir + d)) {
+      if (!isZero(dir + d)) {
         dir = d;
       }
       break;
 
     case 'k':
       final d = Point(0, -1);
-      if (!is_zero(dir + d)) {
+      if (!isZero(dir + d)) {
         dir = d;
       }
       break;
 
     case 'l':
       final d = Point(1, 0);
-      if (!is_zero(dir + d)) {
+      if (!isZero(dir + d)) {
         dir = d;
       }
       break;
   }
 }
 
-void handleUpdate(Timer timer) {
+void tick(Timer timer) {
   if (quit || game_over || paused) {
     return;
   }
@@ -190,17 +190,17 @@ void handleUpdate(Timer timer) {
   draw();
 }
 
-void init_game() {
+void init() {
   snake.clear();
   snake.add(Point((COLS / 2).round(), (ROWS / 2).round()));
   dir = Point(1, 0);
-  food = create_food();
+  food = getFood();
 }
 
 void main() {
   c.cursor = false;
   c.rawMode = true;
-  init_game();
-  Timer.periodic(Duration(milliseconds: 150), handleUpdate);
-  c.input.listen(handleInput);
+  init();
+  Timer.periodic(Duration(milliseconds: 150), tick);
+  c.input.listen(input);
 }
