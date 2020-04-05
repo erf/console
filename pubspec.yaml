@@ -1,0 +1,7 @@
+name: console
+version: 0.0.1
+description: async io and rawmode console experiments
+environment:
+  sdk: '>=2.7.2 <3.0.0'
+dependencies:
+  rxdart: ^0.23.1
