@@ -1,6 +1,8 @@
-# A minimal library for writing console apps in dart
+# Minimal lib for interactive console apps in dart
 
-Abstract away some vt-100 escape codes and dart io
+Abstract away some vt-100 escape codes and dart.io
+
+Mostly for myself to learn and have fun with
 
 Features
 
