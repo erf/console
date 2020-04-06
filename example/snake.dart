@@ -6,22 +6,23 @@ import 'package:console/console.dart';
 
 final c = Console();
 
+final rows = c.rows;
+final cols = c.cols;
+
 final ROWS = c.rows - 6;
 final COLS = c.cols;
 
-int rows = c.rows;
-int cols = c.cols;
-List<Point> snake = [];
-Point food;
-Point dir;
+List<Point<int>> snake = [];
+List<Point<int>> food = [];
+Point<int> dir = Point(1, 0);
 bool quit = false;
 bool game_over = false;
 bool paused = false;
-final r = Random();
+Random rand = Random();
 
-Point randomPoint() {
-  final x = r.nextInt(COLS - 2) + 1;
-  final y = r.nextInt(ROWS - 2) + 1;
+Point<int> randomPoint() {
+  final x = rand.nextInt(COLS - 2) + 1;
+  final y = rand.nextInt(ROWS - 2) + 1;
   return Point(x, y);
 }
 
@@ -29,7 +30,7 @@ bool isZero(Point p) {
   return p.x == 0 && p.y == 0;
 }
 
-Point getFood() {
+Point<int> createFood() {
   while (true) {
     final r = randomPoint();
     final p = snake.firstWhere((el) => el == r, orElse: () => null);
@@ -37,6 +38,10 @@ Point getFood() {
       return r;
     }
   }
+}
+
+Point<int> genFood(int index) {
+  return createFood();
 }
 
 void update() {
@@ -49,8 +54,8 @@ void update() {
   snake.first += dir;
 
   // check if snake hit wall
-  final p = snake.first;
-  if (p.x == 0 || p.y == 0 || p.y == ROWS - 1 || p.x == COLS - 1) {
+  final head = snake.first;
+  if (head.x == 0 || head.y == 0 || head.y == ROWS - 1 || head.x == COLS - 1) {
     game_over = true;
   }
 
@@ -67,12 +72,13 @@ void update() {
   }
 
   // check if food was eaten and create new food
-  if (p == food) {
+  final foodIndex = food.indexOf(head);
+  if (foodIndex != -1) {
     // more snake
     snake.add(snake.last);
 
-    // create until food is not on snake
-    food = getFood();
+    // add new food
+    food[foodIndex] = createFood();
   }
 }
 
@@ -96,8 +102,10 @@ void draw() {
 
   // draw food
   c.color_fg = 9;
-  c.move(row: food.y + 1, col: food.x + 1);
-  c.append('o');
+  food.forEach((f) {
+    c.move(row: f.y + 1, col: f.x + 1);
+    c.append('o');
+  });
 
   // draw snake
   c.color_fg = 11;
@@ -194,7 +202,9 @@ void init() {
   snake.clear();
   snake.add(Point((COLS / 2).round(), (ROWS / 2).round()));
   dir = Point(1, 0);
-  food = getFood();
+  final numFood = max((sqrt(COLS * ROWS) / 4.0).round(), 1);
+  print(numFood);
+  food = List<Point<int>>.generate(numFood, genFood);
 }
 
 void main() {
