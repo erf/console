@@ -20,21 +20,16 @@ Point<int> dir = Point(1, 0);
 State state = State.playing;
 Random rand = Random();
 
-Point<int> randomPoint() {
-  final x = rand.nextInt(COLS - 2) + 1;
-  final y = rand.nextInt(ROWS - 2) + 1;
-  return Point(x, y);
-}
-
 bool isZero(Point p) {
   return p.x == 0 && p.y == 0;
 }
 
 Point<int> createFood() {
   while (true) {
-    final r = randomPoint();
-    final p = snake.firstWhere((el) => el == r, orElse: () => null);
-    if (p == null) {
+    final x = rand.nextInt(COLS - 2) + 1;
+    final y = rand.nextInt(ROWS - 2) + 1;
+    final r = Point(x, y);
+    if (!snake.contains(r)) {
       return r;
     }
   }
