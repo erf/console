@@ -11,10 +11,10 @@ void draw() {
   c.color_bg = 0;
   c.clear();
 
-  int colors = 0;
+  var colors = 0;
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
-      c.move(row + 1, col + 1);
+      c.move(row: row + 1, col: col + 1);
       c.color_bg = colors;
       c.append(' ');
       ++colors;
@@ -28,12 +28,11 @@ void draw() {
 
 void input(codes) {
   final str = String.fromCharCodes(codes);
-
   switch (str) {
     case 'q':
       {
         c.cursor = true;
-        c.move(1, 1);
+        c.move(row: 1, col: 1);
         c.color_reset();
         c.clear();
         c.apply();
@@ -43,9 +42,16 @@ void input(codes) {
   }
 }
 
+void resize(event) {
+  rows = c.rows;
+  cols = c.cols;
+  draw();
+}
+
 void main() {
   c.cursor = false;
   c.rawMode = true;
   draw();
   c.input.listen(input);
+  c.resize.listen(resize);
 }

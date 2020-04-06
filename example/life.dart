@@ -7,8 +7,8 @@ import 'package:console/console.dart';
 final c = Console();
 final r = Random();
 
-final int rows = c.rows;
-final int cols = c.cols;
+final rows = c.rows;
+final cols = c.cols;
 final int size = rows * cols;
 
 final temp = List<bool>(size);
@@ -78,41 +78,28 @@ void update() {
   data.setAll(0, temp);
 }
 
-void resetConsole() {
+void quit() {
   c.clear();
   c.color_reset();
-  c.rawMode = false;
   c.cursor = true;
   c.apply();
-}
-
-void crash(String message) {
-  resetConsole();
-  c.write(message);
-  exit(1);
-}
-
-void quit() {
-  resetConsole();
+  c.rawMode = false;
   exit(0);
 }
 
+void input(codes) {
+  done = true;
+}
+
+void tick(t) {
+  draw();
+  update();
+  if (done) quit();
+}
+
 void main(List<String> arguments) {
-  try {
-    c.rawMode = true;
-    c.cursor = false;
-
-    c.input.listen((codes) {
-      done = true;
-    });
-
-    Timer.periodic(Duration(milliseconds: 200), (t) {
-      draw();
-      update();
-      if (done) quit();
-    });
-  } catch (exception) {
-    crash(exception.toString());
-    rethrow;
-  }
+  c.rawMode = true;
+  c.cursor = false;
+  c.input.listen(input);
+  Timer.periodic(Duration(milliseconds: 200), tick);
 }

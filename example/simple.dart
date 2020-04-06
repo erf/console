@@ -4,6 +4,9 @@ import 'package:console/console.dart';
 
 final c = Console();
 
+var cols = c.cols;
+var rows = c.rows;
+
 void quit() {
   c.clear();
   c.color_reset();
@@ -13,30 +16,40 @@ void quit() {
   exit(0);
 }
 
+void draw() {
+  c.clear();
+  c.color_fg = 1;
+  c.color_fg = 6;
+  final str0 = 'Hello';
+  final str1 = 'Press \'q\' to quit';
+  c.move(row: (rows / 2).round() - 1, col: (cols / 2).round() - (str0.length / 2).round());
+  c.append(str0);
+  c.move(row: (rows / 2).round() + 1, col: (cols / 2).round() - (str1.length / 2).round());
+  c.append(str1);
+  final str = 'rows $rows cols $cols';
+  c.move(row: rows + 1, col: cols - str.length);
+  c.append(str);
+  c.apply();
+}
+
+void input(codes) {
+  final str = String.fromCharCodes(codes);
+  if (str == 'q') {
+    quit();
+  }
+}
+
+void resize(signal) {
+  cols = c.cols;
+  rows = c.rows;
+  draw();
+}
+
 void main() {
   c.rawMode = true;
   c.cursor = false;
   c.apply();
-
-  c.input.listen((codes) {
-    final str = String.fromCharCodes(codes);
-    if (str == 'q') {
-      quit();
-    }
-  });
-
-  final cols = c.cols;
-  final rows = c.rows;
-
-  c.clear();
-  c.color_fg = 1;
-  c.color_fg = 6;
-  c.move((rows / 2).round() - 1, (cols / 2).round() - 1);
-  c.append('Console');
-  c.move((rows / 2).round() + 1, (cols / 2).round() - 8);
-  c.append("Press 'q' to quit");
-  final str = 'rows $rows cols $cols';
-  c.move(rows + 1, cols - str.length);
-  c.append(str);
-  c.apply();
+  draw();
+  c.input.listen(input);
+  c.resize.listen(resize);
 }

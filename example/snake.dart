@@ -96,21 +96,21 @@ void draw() {
 
   // draw food
   c.color_fg = 9;
-  c.move(food.y + 1, food.x + 1);
+  c.move(row: food.y + 1, col: food.x + 1);
   c.append('o');
 
   // draw snake
   c.color_fg = 11;
   for (var i = 0; i < snake.length; i++) {
     final p = snake[i];
-    c.move(p.y + 1, p.x + 1);
+    c.move(row: p.y + 1, col: p.x + 1);
     c.append('s');
   }
 
   if (game_over) {
     c.color_fg = 226;
     final str = 'Game Over';
-    c.move((rows / 2).round(), (cols / 2 - str.length / 2).round());
+    c.move(row: (rows / 2).round(), col: (cols / 2 - str.length / 2).round());
     c.append(str);
   }
 
@@ -119,7 +119,7 @@ void draw() {
   final instructions = ['hjkl - move', 'p    - pause', 'r    - restart', 'q    - quit'];
 
   for (var i = 0; i < 4; i++) {
-    c.move(ROWS + 2 + i, 1);
+    c.move(row: ROWS + 2 + i, col: 1);
     c.append(instructions[i]);
   }
 
@@ -133,7 +133,7 @@ void input(codes) {
     case 'q':
       quit = true;
       c.cursor = true;
-      c.move(1, 1);
+      c.move(row: 1, col: 1);
       c.color_reset();
       c.clear();
       c.apply();

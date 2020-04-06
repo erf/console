@@ -21,8 +21,12 @@ class Console {
     return stdout.terminalLines;
   }
 
-  Stream get input {
+  Stream<List<int>> get input {
     return stdin.asBroadcastStream();
+  }
+
+  Stream<ProcessSignal> get resize {
+    return ProcessSignal.sigwinch.watch();
   }
 
   // should use append / apply  in most cases
@@ -39,7 +43,7 @@ class Console {
     buffer.clear();
   }
 
-  void move(int row, int col) {
+  void move({int row, int col}) {
     append('\x1b[${row};${col}H');
   }
 
@@ -67,6 +71,4 @@ class Console {
   void color_reset() {
     append('\x1b[0m');
   }
-
-// TODO resize callback using SIGWINCH and ffi
 }

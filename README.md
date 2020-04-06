@@ -7,14 +7,12 @@ Mostly for myself to learn and have fun with similar to [sta](https://github.com
 ## Features
 
 - raw mode
-- cols and rows
-- buffer input
+- get cols and rows
+- window resize events
+- buffered input
 - async input stream
-- move cursor
-- hide / show cursor
-- clear
-- bg / fg / reset colors
-
+- move, hide cursor
+- colors
 
 ## Examples
 
