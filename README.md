@@ -28,13 +28,25 @@ A simple usage example:
 ```dart
 import 'package:console/console.dart';
 
+final c = Console();
+
 void main() {
-  final c = Console();
+
   c.rawMode = true;
+  c.cursor = false;
 
   c.input.listen((codes) {
     String string = String.fromCharCodes(codes);
     stdout.write(codes);
+  });
+
+  c.resize.listen((signal) {
+  	var cols = c.cols;
+  	var rows = c.rows;
+  });
+
+  Timer.periodic(Duration(milliseconds: 200), (t) {
+    // TODO update
   });
 
   c.color_fg = 1;
