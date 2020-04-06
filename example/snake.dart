@@ -4,10 +4,10 @@ import 'dart:math';
 
 import 'package:console/console.dart';
 
-const int ROWS = 9;
-const int COLS = 24;
-
 final c = Console();
+
+final ROWS = c.rows - 6;
+final COLS = c.cols;
 
 int rows = c.rows;
 int cols = c.cols;
