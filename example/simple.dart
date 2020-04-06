@@ -18,7 +18,6 @@ void quit() {
 
 void draw() {
   c.clear();
-  c.color_fg = 1;
   c.color_fg = 6;
   final str0 = 'Hello';
   final str1 = 'Press \'q\' to quit';
