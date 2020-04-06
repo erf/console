@@ -9,7 +9,7 @@ final c = Console();
 final rows = c.rows;
 final cols = c.cols;
 
-final ROWS = c.rows - 6;
+final ROWS = c.rows - 4;
 final COLS = c.cols;
 
 List<Point<int>> snake = [];
@@ -124,10 +124,15 @@ void draw() {
 
   c.color_fg = 226;
 
-  final instructions = ['hjkl - move', 'p    - pause', 'r    - restart', 'q    - quit'];
+  final instructions = [
+    'hjkl - move', 
+    'p    - pause', 
+    'r    - restart', 
+    'q    - quit',
+  ];
 
   for (var i = 0; i < 4; i++) {
-    c.move(row: ROWS + 2 + i, col: 1);
+    c.move(row: ROWS + 1 + i, col: 1);
     c.append(instructions[i]);
   }
 
@@ -202,7 +207,7 @@ void init() {
   snake.clear();
   snake.add(Point((COLS / 2).round(), (ROWS / 2).round()));
   dir = Point(1, 0);
-  final numFood = max((sqrt(COLS * ROWS) / 4.0).round(), 1);
+  final numFood = max((sqrt(COLS * ROWS) / 2.0).round(), 1);
   print(numFood);
   food = List<Point<int>>.generate(numFood, genFood);
 }
@@ -211,6 +216,6 @@ void main() {
   c.cursor = false;
   c.rawMode = true;
   init();
-  Timer.periodic(Duration(milliseconds: 150), tick);
+  Timer.periodic(Duration(milliseconds: 100), tick);
   c.input.listen(input);
 }
