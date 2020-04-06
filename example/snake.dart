@@ -104,12 +104,12 @@ void draw() {
 
   // draw snake
   c.color_fg = 11;
-  for (var i = 0; i < snake.length; i++) {
-    final p = snake[i];
+  snake.forEach((p) {
     c.move(row: p.y + 1, col: p.x + 1);
     c.append('s');
-  }
+  });
 
+  // draw game over
   if (state == State.game_over) {
     c.color_fg = 226;
     final str = 'Game Over';
@@ -117,6 +117,7 @@ void draw() {
     c.append(str);
   }
 
+  // draw instructions
   c.color_fg = 226;
 
   final instructions = [
