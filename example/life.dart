@@ -9,7 +9,7 @@ final r = Random();
 
 final rows = c.rows;
 final cols = c.cols;
-final int size = rows * cols;
+final size = rows * cols;
 
 final temp = List<bool>(size);
 final data = List<bool>.generate(size, (i) => r.nextBool(), growable: false);

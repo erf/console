@@ -12,12 +12,12 @@ final cols = c.cols;
 final ROWS = c.rows - 4;
 final COLS = c.cols;
 
+enum State { playing, paused, game_over, quit }
+
 List<Point<int>> snake = [];
 List<Point<int>> food = [];
 Point<int> dir = Point(1, 0);
-bool quit = false;
-bool game_over = false;
-bool paused = false;
+State state = State.playing;
 Random rand = Random();
 
 Point<int> randomPoint() {
@@ -56,7 +56,7 @@ void update() {
   // check if snake hit wall
   final head = snake.first;
   if (head.x == 0 || head.y == 0 || head.y == ROWS - 1 || head.x == COLS - 1) {
-    game_over = true;
+    state = State.game_over;
   }
 
   // check if snake hit itself
@@ -65,7 +65,7 @@ void update() {
     for (var j = i + 1; j < snake.length; j++) {
       final p1 = snake[j];
       if (p.x == p1.x && p.y == p1.y) {
-        game_over = true;
+        state = State.game_over;
         return;
       }
     }
@@ -115,7 +115,7 @@ void draw() {
     c.append('s');
   }
 
-  if (game_over) {
+  if (state == State.game_over) {
     c.color_fg = 226;
     final str = 'Game Over';
     c.move(row: (rows / 2).round(), col: (cols / 2 - str.length / 2).round());
@@ -125,9 +125,9 @@ void draw() {
   c.color_fg = 226;
 
   final instructions = [
-    'hjkl - move', 
-    'p    - pause', 
-    'r    - restart', 
+    'hjkl - move',
+    'p    - pause',
+    'r    - restart',
     'q    - quit',
   ];
 
@@ -144,7 +144,7 @@ void input(codes) {
 
   switch (str) {
     case 'q':
-      quit = true;
+      state = State.quit;
       c.cursor = true;
       c.move(row: 1, col: 1);
       c.color_reset();
@@ -154,15 +154,18 @@ void input(codes) {
       break;
 
     case 'p':
-      if (game_over) {
+      if (state == State.game_over) {
         return;
       }
-      paused = !paused;
+      if (state == State.paused) {
+        state = State.playing;
+      } else if (state == State.playing) {
+        state = State.paused;
+      }
       break;
 
     case 'r':
       init();
-      game_over = false;
       break;
 
     case 'h':
@@ -196,7 +199,7 @@ void input(codes) {
 }
 
 void tick(Timer timer) {
-  if (quit || game_over || paused) {
+  if (state != State.playing) {
     return;
   }
   update();
@@ -204,11 +207,10 @@ void tick(Timer timer) {
 }
 
 void init() {
-  snake.clear();
-  snake.add(Point((COLS / 2).round(), (ROWS / 2).round()));
+  state = State.playing;
+  snake = [Point((COLS / 2).round(), (ROWS / 2).round())];
   dir = Point(1, 0);
   final numFood = max((sqrt(COLS * ROWS) / 2.0).round(), 1);
-  print(numFood);
   food = List<Point<int>>.generate(numFood, genFood);
 }
 
