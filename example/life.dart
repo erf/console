@@ -81,7 +81,7 @@ void update() {
 void quit() {
   c.clear();
   c.color_reset();
-  c.cursor = true;
+  c.cursor(visible: true);
   c.apply();
   c.rawMode = false;
   exit(0);
@@ -99,7 +99,7 @@ void tick(t) {
 
 void main(List<String> arguments) {
   c.rawMode = true;
-  c.cursor = false;
+  c.cursor(visible: false);
   c.input.listen(input);
   Timer.periodic(Duration(milliseconds: 200), tick);
 }

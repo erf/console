@@ -31,7 +31,7 @@ void input(codes) {
   switch (str) {
     case 'q':
       {
-        c.cursor = true;
+        c.cursor(visible: true);
         c.move(row: 1, col: 1);
         c.color_reset();
         c.clear();
@@ -49,7 +49,7 @@ void resize(event) {
 }
 
 void main() {
-  c.cursor = false;
+  c.cursor(visible: false);
   c.rawMode = true;
   draw();
   c.input.listen(input);

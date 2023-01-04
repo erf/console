@@ -15,7 +15,7 @@ void main() {
     });
 
     test('hide cursor', () {
-      console.cursor = false;
+      console.cursor(visible: false);
       expect(console.buffer.toString(), '\x1b[?25l');
     });
 

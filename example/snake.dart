@@ -141,7 +141,7 @@ void input(codes) {
   switch (str) {
     case 'q':
       state = State.quit;
-      c.cursor = true;
+      c.cursor(visible: true);
       c.move(row: 1, col: 1);
       c.color_reset();
       c.clear();
@@ -211,7 +211,7 @@ void init() {
 }
 
 void main() {
-  c.cursor = false;
+  c.cursor(visible: false);
   c.rawMode = true;
   init();
   Timer.periodic(Duration(milliseconds: 100), tick);
