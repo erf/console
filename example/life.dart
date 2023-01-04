@@ -31,6 +31,7 @@ void draw() {
   c.background(0);
   c.foreground(6);
 
+  c.home();
   c.erase();
 
   for (var row = 0; row < rows; row++) {
