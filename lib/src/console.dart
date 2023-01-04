@@ -1,5 +1,7 @@
 import 'dart:io';
 
+// https://vt100.net/docs/vt100-ug/contents.html
+// https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences
 // https://ilkerf.tripod.com/cdoc/vt100ref.html
 class Console {
   final buffer = StringBuffer();
@@ -35,7 +37,7 @@ class Console {
     buffer.write(str);
   }
 
-  // applies the buffer to the console.
+  // applies the buffer to the console and clears it.
   void apply() {
     stdout.write(buffer);
     buffer.clear();
@@ -75,7 +77,7 @@ class Console {
     append('\x1b[48;5;${color}m');
   }
 
-  // resets the console style.
+  // reset the style.
   void reset() {
     append('\x1b[0m');
   }
