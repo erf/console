@@ -14,7 +14,7 @@ void draw() {
   var colors = 0;
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
-      c.move(row: row + 1, col: col + 1);
+      c.move(y: row + 1, x: col + 1);
       c.color_bg = colors;
       c.append(' ');
       ++colors;
@@ -32,7 +32,7 @@ void input(codes) {
     case 'q':
       {
         c.cursor(visible: true);
-        c.move(row: 1, col: 1);
+        c.move(y: 1, x: 1);
         c.color_reset();
         c.clear();
         c.apply();

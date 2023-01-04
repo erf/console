@@ -98,14 +98,14 @@ void draw() {
   // draw food
   c.color_fg = 9;
   food.forEach((f) {
-    c.move(row: f.y + 1, col: f.x + 1);
+    c.move(y: f.y + 1, x: f.x + 1);
     c.append('o');
   });
 
   // draw snake
   c.color_fg = 11;
   snake.forEach((p) {
-    c.move(row: p.y + 1, col: p.x + 1);
+    c.move(y: p.y + 1, x: p.x + 1);
     c.append('s');
   });
 
@@ -113,7 +113,7 @@ void draw() {
   if (state == State.game_over) {
     c.color_fg = 226;
     final str = 'Game Over';
-    c.move(row: (rows / 2).round(), col: (cols / 2 - str.length / 2).round());
+    c.move(y: (rows / 2).round(), x: (cols / 2 - str.length / 2).round());
     c.append(str);
   }
 
@@ -128,7 +128,7 @@ void draw() {
   ];
 
   for (var i = 0; i < 4; i++) {
-    c.move(row: ROWS + 1 + i, col: 1);
+    c.move(y: ROWS + 1 + i, x: 1);
     c.append(instructions[i]);
   }
 
@@ -142,7 +142,7 @@ void input(codes) {
     case 'q':
       state = State.quit;
       c.cursor(visible: true);
-      c.move(row: 1, col: 1);
+      c.move(y: 1, x: 1);
       c.color_reset();
       c.clear();
       c.apply();

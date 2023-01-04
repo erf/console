@@ -10,7 +10,7 @@ void main() {
     });
 
     test('move', () {
-      console.move(row: 1, col: 2);
+      console.move(y: 1, x: 2);
       expect(console.buffer.toString(), '\x1b[1;2H');
     });
 
