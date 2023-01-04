@@ -59,9 +59,9 @@ class Console {
     append('\x1b[H');
   }
 
-  // erases the screen with the background colour and moves the cursor to home.
+  // erases the screen from the cursor position to the end of the screen.
   void erase() {
-    append('\x1b[2J');
+    append('\x1b[J');
   }
 
   // erases the line with the background colour and moves the cursor to the start of the line.
