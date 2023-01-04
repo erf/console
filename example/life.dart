@@ -11,7 +11,7 @@ final rows = c.rows;
 final cols = c.cols;
 final size = rows * cols;
 
-final temp = List<bool>(size);
+final temp = List<bool>.filled(size, false);
 final data = List<bool>.generate(size, (i) => r.nextBool(), growable: false);
 
 bool done = false;
