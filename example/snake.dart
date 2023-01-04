@@ -212,7 +212,7 @@ void init() {
 
 void main() {
   c.cursor(visible: false);
-  c.rawMode = true;
+  c.rawMode(true);
   init();
   Timer.periodic(Duration(milliseconds: 100), tick);
   c.input.listen(input);

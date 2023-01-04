@@ -50,7 +50,7 @@ void resize(event) {
 
 void main() {
   c.cursor(visible: false);
-  c.rawMode = true;
+  c.rawMode(true);
   draw();
   c.input.listen(input);
   c.resize.listen(resize);

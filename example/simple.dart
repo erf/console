@@ -10,7 +10,7 @@ var rows = c.height;
 void quit() {
   c.clear();
   c.color_reset();
-  c.rawMode = false;
+  c.rawMode(false);
   c.cursor(visible: true);
   c.apply();
   exit(0);
@@ -49,7 +49,7 @@ void resize(signal) {
 }
 
 void main() {
-  c.rawMode = true;
+  c.rawMode(true);
   c.cursor(visible: false);
   c.apply();
   draw();

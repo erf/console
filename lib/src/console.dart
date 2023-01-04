@@ -3,7 +3,7 @@ import 'dart:io';
 class Console {
   final buffer = StringBuffer();
 
-  set rawMode(bool rawMode) {
+  void rawMode(bool rawMode) {
     if (rawMode) {
       stdin.echoMode = false;
       stdin.lineMode = false;
