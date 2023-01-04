@@ -25,12 +25,12 @@ void main() {
     });
 
     test('color_fg', () {
-      console.color_fg(1);
+      console.foreground(1);
       expect(console.buffer.toString(), '\x1b[38;5;1m');
     });
 
     test('color_bg', () {
-      console.color_bg(6);
+      console.background(6);
       expect(console.buffer.toString(), '\x1b[48;5;6m');
     });
 
@@ -40,7 +40,7 @@ void main() {
     });
 
     test('two commands', () {
-      console.color_fg(1);
+      console.foreground(1);
       console.append('hello');
       expect(console.buffer.toString(), '\x1b[38;5;1mhello');
     });

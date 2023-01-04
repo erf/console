@@ -78,12 +78,12 @@ void update() {
 }
 
 void draw() {
-  c.color_bg(0);
+  c.background(0);
   c.clear();
 
   // draw wall
-  c.color_fg(7);
-  c.color_bg(238);
+  c.foreground(7);
+  c.background(238);
   for (var row = 0; row < ROWS; row++) {
     for (var col = 0; col < COLS; col++) {
       if (row == 0 || col == 0 || row == ROWS - 1 || col == COLS - 1) {
@@ -96,14 +96,14 @@ void draw() {
   }
 
   // draw food
-  c.color_fg(9);
+  c.foreground(9);
   food.forEach((f) {
     c.move(y: f.y + 1, x: f.x + 1);
     c.append('o');
   });
 
   // draw snake
-  c.color_fg(11);
+  c.foreground(11);
   snake.forEach((p) {
     c.move(y: p.y + 1, x: p.x + 1);
     c.append('s');
@@ -111,14 +111,14 @@ void draw() {
 
   // draw game over
   if (state == State.game_over) {
-    c.color_fg(226);
+    c.foreground(226);
     final str = 'Game Over';
     c.move(y: (rows / 2).round(), x: (cols / 2 - str.length / 2).round());
     c.append(str);
   }
 
   // draw instructions
-  c.color_fg(226);
+  c.foreground(226);
 
   final instructions = [
     'hjkl - move',

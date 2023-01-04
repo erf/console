@@ -8,14 +8,14 @@ int rows = c.height;
 int cols = c.width;
 
 void draw() {
-  c.color_bg(0);
+  c.background(0);
   c.clear();
 
   var color = 0;
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       c.move(y: row + 1, x: col + 1);
-      c.color_bg(color);
+      c.background(color);
       c.append(' ');
       ++color;
       if (color >= 256) {
