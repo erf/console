@@ -44,12 +44,12 @@ class Console {
   }
 
   // moves the cursor to the given position.
-  void move({required int y, required int x}) {
+  void cursorPosition({required int x, required int y}) {
     append('\x1b[$y;${x}H');
   }
 
   // hides or shows the cursor.
-  void cursor({required bool visible}) {
+  void cursorVisible(bool visible) {
     if (visible) {
       append('\x1b[?25h');
     } else {

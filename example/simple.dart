@@ -10,7 +10,7 @@ var rows = c.height;
 void quit() {
   c.clear();
   c.reset();
-  c.cursor(visible: true);
+  c.cursorVisible(true);
   c.apply();
   c.rawMode(false);
   exit(0);
@@ -21,16 +21,16 @@ void draw() {
   c.foreground(6);
   final str0 = 'Hello';
   final str1 = 'Press \'q\' to quit';
-  c.move(
+  c.cursorPosition(
       y: (rows / 2).round() - 1,
       x: (cols / 2).round() - (str0.length / 2).round());
   c.append(str0);
-  c.move(
+  c.cursorPosition(
       y: (rows / 2).round() + 1,
       x: (cols / 2).round() - (str1.length / 2).round());
   c.append(str1);
   final str = 'rows $rows cols $cols';
-  c.move(y: rows + 1, x: cols - str.length);
+  c.cursorPosition(y: rows + 1, x: cols - str.length);
   c.append(str);
   c.apply();
 }
@@ -50,7 +50,7 @@ void resize(signal) {
 
 void main() {
   c.rawMode(true);
-  c.cursor(visible: false);
+  c.cursorVisible(false);
   c.apply();
   draw();
   c.input.listen(input);

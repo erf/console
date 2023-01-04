@@ -14,7 +14,7 @@ void draw() {
   var color = 0;
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
-      c.move(y: row + 1, x: col + 1);
+      c.cursorPosition(y: row + 1, x: col + 1);
       c.background(color);
       c.append(' ');
       ++color;
@@ -31,8 +31,8 @@ void input(codes) {
   switch (str) {
     case 'q':
       {
-        c.cursor(visible: true);
-        c.move(y: 1, x: 1);
+        c.cursorVisible(true);
+        c.cursorPosition(y: 1, x: 1);
         c.reset();
         c.clear();
         c.apply();
@@ -49,7 +49,7 @@ void resize(event) {
 }
 
 void main() {
-  c.cursor(visible: false);
+  c.cursorVisible(false);
   c.rawMode(true);
   draw();
   c.input.listen(input);

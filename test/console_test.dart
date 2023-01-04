@@ -10,12 +10,12 @@ void main() {
     });
 
     test('move', () {
-      console.move(y: 1, x: 2);
+      console.cursorPosition(y: 1, x: 2);
       expect(console.buffer.toString(), '\x1b[1;2H');
     });
 
     test('hide cursor', () {
-      console.cursor(visible: false);
+      console.cursorVisible(false);
       expect(console.buffer.toString(), '\x1b[?25l');
     });
 

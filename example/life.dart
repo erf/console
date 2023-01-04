@@ -80,7 +80,7 @@ void update() {
 void quit() {
   c.clear();
   c.reset();
-  c.cursor(visible: true);
+  c.cursorVisible(true);
   c.apply();
   c.rawMode(false);
   exit(0);
@@ -98,7 +98,7 @@ void tick(t) {
 
 void main(List<String> arguments) {
   c.rawMode(true);
-  c.cursor(visible: false);
+  c.cursorVisible(false);
   c.input.listen(input);
   Timer.periodic(Duration(milliseconds: 200), tick);
 }

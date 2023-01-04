@@ -98,14 +98,14 @@ void draw() {
   // draw food
   c.foreground(9);
   food.forEach((f) {
-    c.move(y: f.y + 1, x: f.x + 1);
+    c.cursorPosition(y: f.y + 1, x: f.x + 1);
     c.append('o');
   });
 
   // draw snake
   c.foreground(11);
   snake.forEach((p) {
-    c.move(y: p.y + 1, x: p.x + 1);
+    c.cursorPosition(y: p.y + 1, x: p.x + 1);
     c.append('s');
   });
 
@@ -113,7 +113,8 @@ void draw() {
   if (state == State.game_over) {
     c.foreground(226);
     final str = 'Game Over';
-    c.move(y: (rows / 2).round(), x: (cols / 2 - str.length / 2).round());
+    c.cursorPosition(
+        y: (rows / 2).round(), x: (cols / 2 - str.length / 2).round());
     c.append(str);
   }
 
@@ -128,7 +129,7 @@ void draw() {
   ];
 
   for (var i = 0; i < 4; i++) {
-    c.move(y: ROWS + 1 + i, x: 1);
+    c.cursorPosition(y: ROWS + 1 + i, x: 1);
     c.append(instructions[i]);
   }
 
@@ -141,7 +142,7 @@ void input(codes) {
   switch (str) {
     case 'q':
       state = State.quit;
-      c.cursor(visible: true);
+      c.cursorVisible(true);
       c.reset();
       c.clear();
       c.apply();
@@ -211,7 +212,7 @@ void init() {
 }
 
 void main() {
-  c.cursor(visible: false);
+  c.cursorVisible(false);
   c.rawMode(true);
   init();
   Timer.periodic(Duration(milliseconds: 100), tick);
