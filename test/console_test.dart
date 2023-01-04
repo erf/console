@@ -35,7 +35,7 @@ void main() {
     });
 
     test('color_reset', () {
-      console.color_reset();
+      console.reset();
       expect(console.buffer.toString(), '\x1b[0m');
     });
 

@@ -68,7 +68,7 @@ class Console {
     append('\x1b[48;5;${color}m');
   }
 
-  void color_reset() {
+  void reset() {
     append('\x1b[0m');
   }
 }

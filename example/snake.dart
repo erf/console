@@ -143,7 +143,7 @@ void input(codes) {
       state = State.quit;
       c.cursor(visible: true);
       c.move(y: 1, x: 1);
-      c.color_reset();
+      c.reset();
       c.clear();
       c.apply();
       exit(0);

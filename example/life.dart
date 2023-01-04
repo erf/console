@@ -80,7 +80,7 @@ void update() {
 
 void quit() {
   c.clear();
-  c.color_reset();
+  c.reset();
   c.cursor(visible: true);
   c.apply();
   c.rawMode(false);
