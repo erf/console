@@ -6,11 +6,11 @@ import 'package:console/console.dart';
 
 final c = Console();
 
-final rows = c.rows;
-final cols = c.cols;
+final rows = c.height;
+final cols = c.width;
 
-final ROWS = c.rows - 4;
-final COLS = c.cols;
+final ROWS = c.height - 4;
+final COLS = c.width;
 
 enum State { playing, paused, game_over, quit }
 

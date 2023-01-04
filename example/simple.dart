@@ -4,8 +4,8 @@ import 'package:console/console.dart';
 
 final c = Console();
 
-var cols = c.cols;
-var rows = c.rows;
+var cols = c.width;
+var rows = c.height;
 
 void quit() {
   c.clear();
@@ -43,8 +43,8 @@ void input(codes) {
 }
 
 void resize(signal) {
-  cols = c.cols;
-  rows = c.rows;
+  cols = c.width;
+  rows = c.height;
   draw();
 }
 

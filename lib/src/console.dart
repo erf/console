@@ -13,11 +13,11 @@ class Console {
     }
   }
 
-  int get cols {
+  int get width {
     return stdout.terminalColumns;
   }
 
-  int get rows {
+  int get height {
     return stdout.terminalLines;
   }
 

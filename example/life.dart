@@ -7,8 +7,8 @@ import 'package:console/console.dart';
 final c = Console();
 final r = Random();
 
-final rows = c.rows;
-final cols = c.cols;
+final rows = c.height;
+final cols = c.width;
 final size = rows * cols;
 
 final temp = List<bool>.filled(size, false);
