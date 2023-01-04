@@ -29,11 +29,6 @@ class Console {
     return ProcessSignal.sigwinch.watch();
   }
 
-  // should use append / apply  in most cases
-  void write(Object object) {
-    stdout.write(object);
-  }
-
   void append(String str) {
     buffer.write(str);
   }
