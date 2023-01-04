@@ -3,7 +3,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('console tests', () {
-    Console console;
+    late Console console;
 
     setUp(() {
       console = Console();
