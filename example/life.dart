@@ -31,7 +31,7 @@ void draw() {
   c.background(0);
   c.foreground(6);
 
-  c.clear();
+  c.erase();
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
@@ -79,7 +79,8 @@ void update() {
 }
 
 void quit() {
-  c.clear();
+  c.home();
+  c.erase();
   c.reset();
   c.cursor(visible: true);
   c.apply();

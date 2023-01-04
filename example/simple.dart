@@ -8,7 +8,7 @@ var cols = c.width;
 var rows = c.height;
 
 void quit() {
-  c.clear();
+  c.erase();
   c.reset();
   c.rawMode(false);
   c.cursor(visible: true);
@@ -17,7 +17,7 @@ void quit() {
 }
 
 void draw() {
-  c.clear();
+  c.erase();
   c.foreground(6);
   final str0 = 'Hello';
   final str1 = 'Press \'q\' to quit';

@@ -29,19 +29,23 @@ class Console {
     return ProcessSignal.sigwinch.watch();
   }
 
+  // appends the given string to the buffer.
   void append(String str) {
     buffer.write(str);
   }
 
+  // applies the buffer to the console.
   void apply() {
     stdout.write(buffer);
     buffer.clear();
   }
 
+  // moves the cursor to the given position.
   void move({required int y, required int x}) {
     append('\x1b[${y};${x}H');
   }
 
+  // hides or shows the cursor.
   void cursor({required bool visible}) {
     if (visible) {
       append('\x1b[?25h');
@@ -50,19 +54,27 @@ class Console {
     }
   }
 
-  void clear() {
-    append('\x1b[H'); // Go home
-    append('\x1b[J'); // erase down
+  // moves the cursor to the top left.
+  void home() {
+    append('\x1b[H');
   }
 
+  // erases the screen with the background colour and moves the cursor to home.
+  void erase() {
+    append('\x1b[2J');
+  }
+
+  // erases the line with the background colour and moves the cursor to the start of the line.
   void foreground(int color) {
     append('\x1b[38;5;${color}m');
   }
 
+  // set background color
   void background(int color) {
     append('\x1b[48;5;${color}m');
   }
 
+  // resets the console style.
   void reset() {
     append('\x1b[0m');
   }

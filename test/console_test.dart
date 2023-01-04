@@ -19,9 +19,14 @@ void main() {
       expect(console.buffer.toString(), '\x1b[?25l');
     });
 
-    test('clear', () {
-      console.clear();
-      expect(console.buffer.toString(), '\x1b[H\x1b[J');
+    test('home', () {
+      console.home();
+      expect(console.buffer.toString(), '\x1b[H');
+    });
+
+    test('erase', () {
+      console.erase();
+      expect(console.buffer.toString(), '\x1b[2J');
     });
 
     test('color_fg', () {

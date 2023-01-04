@@ -79,7 +79,7 @@ void update() {
 
 void draw() {
   c.background(0);
-  c.clear();
+  c.erase();
 
   // draw wall
   c.foreground(7);
@@ -144,7 +144,7 @@ void input(codes) {
       c.cursor(visible: true);
       c.move(y: 1, x: 1);
       c.reset();
-      c.clear();
+      c.erase();
       c.apply();
       exit(0);
       break;
