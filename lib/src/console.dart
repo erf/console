@@ -1,5 +1,6 @@
 import 'dart:io';
 
+// https://ilkerf.tripod.com/cdoc/vt100ref.html
 class Console {
   final buffer = StringBuffer();
 
@@ -42,7 +43,7 @@ class Console {
 
   // moves the cursor to the given position.
   void move({required int y, required int x}) {
-    append('\x1b[${y};${x}H');
+    append('\x1b[$y;${x}H');
   }
 
   // hides or shows the cursor.
