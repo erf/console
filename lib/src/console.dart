@@ -43,7 +43,7 @@ class Console {
     buffer.clear();
   }
 
-  void move({int row, int col}) {
+  void move({required int row, required int col}) {
     append('\x1b[${row};${col}H');
   }
 
