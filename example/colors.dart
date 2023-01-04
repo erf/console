@@ -8,17 +8,17 @@ int rows = c.height;
 int cols = c.width;
 
 void draw() {
-  c.color_bg = 0;
+  c.color_bg(0);
   c.clear();
 
-  var colors = 0;
+  var color = 0;
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       c.move(y: row + 1, x: col + 1);
-      c.color_bg = colors;
+      c.color_bg(color);
       c.append(' ');
-      ++colors;
-      if (colors >= 256) {
+      ++color;
+      if (color >= 256) {
         break;
       }
     }

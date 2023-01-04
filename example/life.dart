@@ -28,8 +28,8 @@ final neighbors = [
 ];
 
 void draw() {
-  c.color_bg = 0;
-  c.color_fg = 6;
+  c.color_bg(0);
+  c.color_fg(6);
 
   c.clear();
 

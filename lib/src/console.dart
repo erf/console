@@ -60,11 +60,11 @@ class Console {
     append('\x1b[J'); // erase down
   }
 
-  set color_fg(int color) {
+  void color_fg(int color) {
     append('\x1b[38;5;${color}m');
   }
 
-  set color_bg(int color) {
+  void color_bg(int color) {
     append('\x1b[48;5;${color}m');
   }
 
