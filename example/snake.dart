@@ -143,7 +143,7 @@ void input(codes) {
     case 'q':
       state = State.quit;
       c.cursorVisible(true);
-      c.reset();
+      c.resetStyles();
       c.clear();
       c.apply();
       c.rawMode(false);

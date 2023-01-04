@@ -9,12 +9,12 @@ void main() {
       console = Console();
     });
 
-    test('move', () {
+    test('cursorPosition', () {
       console.cursorPosition(y: 1, x: 2);
       expect(console.buffer.toString(), '\x1b[1;2H');
     });
 
-    test('hide cursor', () {
+    test('cursorVisible', () {
       console.cursorVisible(false);
       expect(console.buffer.toString(), '\x1b[?25l');
     });
@@ -24,18 +24,18 @@ void main() {
       expect(console.buffer.toString(), '\x1b[H\x1b[J');
     });
 
-    test('color_fg', () {
+    test('foreground', () {
       console.foreground(1);
       expect(console.buffer.toString(), '\x1b[38;5;1m');
     });
 
-    test('color_bg', () {
+    test('background', () {
       console.background(6);
       expect(console.buffer.toString(), '\x1b[48;5;6m');
     });
 
-    test('color_reset', () {
-      console.reset();
+    test('resetStyles', () {
+      console.resetStyles();
       expect(console.buffer.toString(), '\x1b[0m');
     });
 

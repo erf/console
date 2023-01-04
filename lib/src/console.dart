@@ -73,7 +73,7 @@ class Console {
   }
 
   // reset the style.
-  void reset() {
+  void resetStyles() {
     append('\x1b[0m');
   }
 }

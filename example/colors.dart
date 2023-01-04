@@ -33,7 +33,7 @@ void input(codes) {
       {
         c.cursorVisible(true);
         c.cursorPosition(y: 1, x: 1);
-        c.reset();
+        c.resetStyles();
         c.clear();
         c.apply();
         exit(0);

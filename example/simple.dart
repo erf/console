@@ -9,7 +9,7 @@ var rows = c.height;
 
 void quit() {
   c.clear();
-  c.reset();
+  c.resetStyles();
   c.cursorVisible(true);
   c.apply();
   c.rawMode(false);
