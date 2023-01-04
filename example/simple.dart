@@ -8,16 +8,16 @@ var cols = c.width;
 var rows = c.height;
 
 void quit() {
-  c.erase();
+  c.clear();
   c.reset();
-  c.rawMode(false);
   c.cursor(visible: true);
   c.apply();
+  c.rawMode(false);
   exit(0);
 }
 
 void draw() {
-  c.erase();
+  c.clear();
   c.foreground(6);
   final str0 = 'Hello';
   final str1 = 'Press \'q\' to quit';

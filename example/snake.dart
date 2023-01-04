@@ -79,8 +79,7 @@ void update() {
 
 void draw() {
   c.background(0);
-  c.home();
-  c.erase();
+  c.clear();
 
   // draw wall
   c.foreground(7);
@@ -143,11 +142,10 @@ void input(codes) {
     case 'q':
       state = State.quit;
       c.cursor(visible: true);
-      c.move(y: 1, x: 1);
       c.reset();
-      c.home();
-      c.erase();
+      c.clear();
       c.apply();
+      c.rawMode(false);
       exit(0);
       break;
 

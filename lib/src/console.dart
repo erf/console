@@ -57,13 +57,9 @@ class Console {
     }
   }
 
-  // moves the cursor to the top left.
-  void home() {
+  // erases the screen and moves the cursor to the top left.
+  void clear() {
     append('\x1b[H');
-  }
-
-  // erases the screen from the cursor position to the end of the screen.
-  void erase() {
     append('\x1b[J');
   }
 

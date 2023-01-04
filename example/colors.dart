@@ -9,7 +9,7 @@ int cols = c.width;
 
 void draw() {
   c.background(0);
-  c.erase();
+  c.clear();
 
   var color = 0;
   for (var row = 0; row < rows; row++) {
@@ -34,8 +34,7 @@ void input(codes) {
         c.cursor(visible: true);
         c.move(y: 1, x: 1);
         c.reset();
-        c.home();
-        c.erase();
+        c.clear();
         c.apply();
         exit(0);
         break;

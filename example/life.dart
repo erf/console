@@ -30,9 +30,7 @@ final neighbors = [
 void draw() {
   c.background(0);
   c.foreground(6);
-
-  c.home();
-  c.erase();
+  c.clear();
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
@@ -80,8 +78,7 @@ void update() {
 }
 
 void quit() {
-  c.home();
-  c.erase();
+  c.clear();
   c.reset();
   c.cursor(visible: true);
   c.apply();
