@@ -1,3 +1,4 @@
 library console;
 
-export 'src/console.dart';
+export 'src/terminal.dart';
+export 'src/vt100.dart';

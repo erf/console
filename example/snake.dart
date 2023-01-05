@@ -3,16 +3,18 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:console/console.dart';
+import 'package:console/src/vt100_buffer.dart';
 
-final c = Console();
+final term = Terminal();
+final buf = VT100Buffer();
 
-final rows = c.height;
-final cols = c.width;
+final height = term.height;
+final width = term.width;
 
-final ROWS = c.height - 4;
-final COLS = c.width;
+final rows = term.height - 4;
+final cols = term.width;
 
-enum State { playing, paused, game_over, quit }
+enum State { playing, paused, gameOver, quit }
 
 List<Point<int>> snake = [];
 List<Point<int>> food = [];
@@ -26,8 +28,8 @@ bool isZero(Point p) {
 
 Point<int> createFood() {
   while (true) {
-    final x = rand.nextInt(COLS - 2) + 1;
-    final y = rand.nextInt(ROWS - 2) + 1;
+    final x = rand.nextInt(cols - 2) + 1;
+    final y = rand.nextInt(rows - 2) + 1;
     final r = Point(x, y);
     if (!snake.contains(r)) {
       return r;
@@ -50,8 +52,8 @@ void update() {
 
   // check if snake hit wall
   final head = snake.first;
-  if (head.x == 0 || head.y == 0 || head.y == ROWS - 1 || head.x == COLS - 1) {
-    state = State.game_over;
+  if (head.x == 0 || head.y == 0 || head.y == rows - 1 || head.x == cols - 1) {
+    state = State.gameOver;
   }
 
   // check if snake hit itself
@@ -60,7 +62,7 @@ void update() {
     for (var j = i + 1; j < snake.length; j++) {
       final p1 = snake[j];
       if (p.x == p1.x && p.y == p1.y) {
-        state = State.game_over;
+        state = State.gameOver;
         return;
       }
     }
@@ -78,48 +80,48 @@ void update() {
 }
 
 void draw() {
-  c.background(0);
-  c.clear();
+  buf.background(0);
+  buf.homeAndErase();
 
   // draw wall
-  c.foreground(7);
-  c.background(238);
-  for (var row = 0; row < ROWS; row++) {
-    for (var col = 0; col < COLS; col++) {
-      if (row == 0 || col == 0 || row == ROWS - 1 || col == COLS - 1) {
-        c.append('#');
+  buf.foreground(7);
+  buf.background(238);
+  for (var row = 0; row < rows; row++) {
+    for (var col = 0; col < cols; col++) {
+      if (row == 0 || col == 0 || row == rows - 1 || col == cols - 1) {
+        buf.write('#');
       } else {
-        c.append(' ');
+        buf.write(' ');
       }
     }
-    c.append('\r\n');
+    buf.write('\n');
   }
 
   // draw food
-  c.foreground(9);
-  food.forEach((f) {
-    c.cursorPosition(y: f.y + 1, x: f.x + 1);
-    c.append('o');
-  });
+  buf.foreground(9);
+  for (var f in food) {
+    buf.cursorPosition(y: f.y + 1, x: f.x + 1);
+    buf.write('o');
+  }
 
   // draw snake
-  c.foreground(11);
-  snake.forEach((p) {
-    c.cursorPosition(y: p.y + 1, x: p.x + 1);
-    c.append('s');
-  });
+  buf.foreground(11);
+  for (var p in snake) {
+    buf.cursorPosition(y: p.y + 1, x: p.x + 1);
+    buf.write('s');
+  }
 
   // draw game over
-  if (state == State.game_over) {
-    c.foreground(226);
+  if (state == State.gameOver) {
+    buf.foreground(226);
     final str = 'Game Over';
-    c.cursorPosition(
-        y: (rows / 2).round(), x: (cols / 2 - str.length / 2).round());
-    c.append(str);
+    buf.cursorPosition(
+        y: (height / 2).round(), x: (width / 2 - str.length / 2).round());
+    buf.write(str);
   }
 
   // draw instructions
-  c.foreground(226);
+  buf.foreground(226);
 
   final instructions = [
     'hjkl - move',
@@ -129,11 +131,12 @@ void draw() {
   ];
 
   for (var i = 0; i < 4; i++) {
-    c.cursorPosition(y: ROWS + 1 + i, x: 1);
-    c.append(instructions[i]);
+    buf.cursorPosition(y: rows + 1 + i, x: 1);
+    buf.write(instructions[i]);
   }
 
-  c.apply();
+  term.write(buf);
+  buf.clear();
 }
 
 void input(codes) {
@@ -142,16 +145,15 @@ void input(codes) {
   switch (str) {
     case 'q':
       state = State.quit;
-      c.cursorVisible(true);
-      c.resetStyles();
-      c.clear();
-      c.apply();
-      c.rawMode(false);
+      buf.cursorVisible(true);
+      buf.resetStyles();
+      buf.homeAndErase();
+      term.write(buf);
+      term.rawMode = false;
       exit(0);
-      break;
 
     case 'p':
-      if (state == State.game_over) {
+      if (state == State.gameOver) {
         return;
       }
       if (state == State.paused) {
@@ -205,16 +207,16 @@ void tick(Timer timer) {
 
 void init() {
   state = State.playing;
-  snake = [Point((COLS / 2).round(), (ROWS / 2).round())];
+  snake = [Point((cols / 2).round(), (rows / 2).round())];
   dir = Point(1, 0);
-  final numFood = max((sqrt(COLS * ROWS) / 2.0).round(), 1);
+  final numFood = max((sqrt(cols * rows) / 2.0).round(), 1);
   food = List<Point<int>>.generate(numFood, genFood);
 }
 
 void main() {
-  c.cursorVisible(false);
-  c.rawMode(true);
+  term.rawMode = true;
+  buf.cursorVisible(false);
   init();
   Timer.periodic(Duration(milliseconds: 100), tick);
-  c.input.listen(input);
+  term.input.listen(input);
 }

@@ -1,38 +1,41 @@
 import 'dart:io';
 
 import 'package:console/console.dart';
+import 'package:console/src/vt100_buffer.dart';
 
-final c = Console();
+final term = Terminal();
+final vt = VT100Buffer();
 
-var cols = c.width;
-var rows = c.height;
+var cols = term.width;
+var rows = term.height;
 
 void quit() {
-  c.clear();
-  c.resetStyles();
-  c.cursorVisible(true);
-  c.apply();
-  c.rawMode(false);
+  vt.homeAndErase();
+  vt.resetStyles();
+  vt.cursorVisible(true);
+  term.write(vt);
+  term.rawMode = false;
   exit(0);
 }
 
 void draw() {
-  c.clear();
-  c.foreground(6);
+  vt.homeAndErase();
+  vt.foreground(6);
   final str0 = 'Hello';
   final str1 = 'Press \'q\' to quit';
-  c.cursorPosition(
+  vt.cursorPosition(
       y: (rows / 2).round() - 1,
       x: (cols / 2).round() - (str0.length / 2).round());
-  c.append(str0);
-  c.cursorPosition(
+  vt.write(str0);
+  vt.cursorPosition(
       y: (rows / 2).round() + 1,
       x: (cols / 2).round() - (str1.length / 2).round());
-  c.append(str1);
+  vt.write(str1);
   final str = 'rows $rows cols $cols';
-  c.cursorPosition(y: rows + 1, x: cols - str.length);
-  c.append(str);
-  c.apply();
+  vt.cursorPosition(y: rows + 1, x: cols - str.length);
+  vt.write(str);
+  term.write(vt);
+  vt.clear();
 }
 
 void input(codes) {
@@ -43,16 +46,15 @@ void input(codes) {
 }
 
 void resize(signal) {
-  cols = c.width;
-  rows = c.height;
+  cols = term.width;
+  rows = term.height;
   draw();
 }
 
 void main() {
-  c.rawMode(true);
-  c.cursorVisible(false);
-  c.apply();
+  term.rawMode = true;
+  term.write(VT100.cursorVisible(false));
   draw();
-  c.input.listen(input);
-  c.resize.listen(resize);
+  term.input.listen(input);
+  term.resize.listen(resize);
 }

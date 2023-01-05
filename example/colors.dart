@@ -1,29 +1,32 @@
 import 'dart:io';
 
 import 'package:console/console.dart';
+import 'package:console/src/vt100_buffer.dart';
 
-final c = Console();
+final term = Terminal();
+final vt = VT100Buffer();
 
-int rows = c.height;
-int cols = c.width;
+int rows = term.height;
+int cols = term.width;
 
 void draw() {
-  c.background(0);
-  c.clear();
+  vt.background(0);
+  vt.homeAndErase();
 
   var color = 0;
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
-      c.cursorPosition(y: row + 1, x: col + 1);
-      c.background(color);
-      c.append(' ');
+      vt.cursorPosition(y: row + 1, x: col + 1);
+      vt.background(color);
+      vt.write(' ');
       ++color;
       if (color >= 256) {
         break;
       }
     }
   }
-  c.apply();
+  term.write(vt);
+  vt.clear();
 }
 
 void input(codes) {
@@ -31,27 +34,27 @@ void input(codes) {
   switch (str) {
     case 'q':
       {
-        c.cursorVisible(true);
-        c.cursorPosition(y: 1, x: 1);
-        c.resetStyles();
-        c.clear();
-        c.apply();
+        vt.cursorVisible(true);
+        vt.cursorPosition(y: 1, x: 1);
+        vt.resetStyles();
+        vt.homeAndErase();
+        term.write(vt);
+        vt.clear();
         exit(0);
-        break;
       }
   }
 }
 
 void resize(event) {
-  rows = c.height;
-  cols = c.width;
+  rows = term.height;
+  cols = term.width;
   draw();
 }
 
 void main() {
-  c.cursorVisible(false);
-  c.rawMode(true);
+  term.rawMode = true;
+  term.write(VT100.cursorVisible(false));
   draw();
-  c.input.listen(input);
-  c.resize.listen(resize);
+  term.input.listen(input);
+  term.resize.listen(resize);
 }
