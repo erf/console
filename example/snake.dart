@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:console/console.dart';
-import 'package:console/src/vt100_buffer.dart';
 
 final term = Terminal();
 final buf = VT100Buffer();

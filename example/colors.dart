@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:console/console.dart';
-import 'package:console/src/vt100_buffer.dart';
 
 final term = Terminal();
 final vt = VT100Buffer();
