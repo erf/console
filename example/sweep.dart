@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:console/console.dart';
 
-enum State { playing, lost, won, quit }
+enum State { playing, lost, won }
 
 enum GridState { closed, open }
 
@@ -112,8 +112,10 @@ void draw() {
   }
 
   // draw cursor
-  buffer.cursorPosition(y: cursor.y + 1, x: cursor.x + 1);
-  buffer.write('@');
+  if (state == .playing) {
+    buffer.cursorPosition(y: cursor.y + 1, x: cursor.x + 1);
+    buffer.write('@');
+  }
 
   // draw game lost
   if (state == .lost) {
@@ -157,6 +159,9 @@ void draw() {
 }
 
 void move(Point<int> p) {
+  if (state == .lost || state == .won) {
+    return;
+  }
   final newPos = cursor + p;
   if (!outsideGrid(newPos)) {
     cursor = newPos;
@@ -164,11 +169,17 @@ void move(Point<int> p) {
 }
 
 void flag() {
+  if (state == .lost || state == .won) {
+    return;
+  }
   final cell = grid[cursor.y][cursor.x];
   cell.flagged = !cell.flagged;
 }
 
 void open() {
+  if (state == .lost || state == .won) {
+    return;
+  }
   final cell = grid[cursor.y][cursor.x];
   if (cell.state == GridState.open) {
     return;
@@ -291,7 +302,6 @@ void resize(ProcessSignal signal) {
 }
 
 void quit() {
-  state = .quit;
   buffer.cursorVisible(true);
   buffer.resetStyles();
   buffer.homeAndErase();
