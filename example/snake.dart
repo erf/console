@@ -115,7 +115,9 @@ void draw() {
     buf.foreground(226);
     final str = 'Game Over';
     buf.cursorPosition(
-        y: (height / 2).round(), x: (width / 2 - str.length / 2).round());
+      y: (height / 2).round(),
+      x: (width / 2 - str.length / 2).round(),
+    );
     buf.write(str);
   }
 
@@ -138,7 +140,7 @@ void draw() {
   buf.clear();
 }
 
-void input(codes) {
+void input(List<int> codes) {
   final str = String.fromCharCodes(codes);
 
   switch (str) {

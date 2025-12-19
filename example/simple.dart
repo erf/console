@@ -23,12 +23,14 @@ void draw() {
   final str0 = 'Hello';
   final str1 = 'Press \'q\' to quit';
   vt.cursorPosition(
-      y: (rows / 2).round() - 1,
-      x: (cols / 2).round() - (str0.length / 2).round());
+    y: (rows / 2).round() - 1,
+    x: (cols / 2).round() - (str0.length / 2).round(),
+  );
   vt.write(str0);
   vt.cursorPosition(
-      y: (rows / 2).round() + 1,
-      x: (cols / 2).round() - (str1.length / 2).round());
+    y: (rows / 2).round() + 1,
+    x: (cols / 2).round() - (str1.length / 2).round(),
+  );
   vt.write(str1);
   final str = 'rows $rows cols $cols';
   vt.cursorPosition(y: rows + 1, x: cols - str.length);
@@ -37,14 +39,14 @@ void draw() {
   vt.clear();
 }
 
-void input(codes) {
+void input(List<int> codes) {
   final str = String.fromCharCodes(codes);
   if (str == 'q') {
     quit();
   }
 }
 
-void resize(signal) {
+void resize(ProcessSignal signal) {
   cols = term.width;
   rows = term.height;
   draw();

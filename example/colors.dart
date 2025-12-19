@@ -28,7 +28,7 @@ void draw() {
   vt.clear();
 }
 
-void input(codes) {
+void input(List<int> codes) {
   final str = String.fromCharCodes(codes);
   switch (str) {
     case 'q':
@@ -44,7 +44,7 @@ void input(codes) {
   }
 }
 
-void resize(event) {
+void resize(ProcessSignal event) {
   rows = term.height;
   cols = term.width;
   draw();

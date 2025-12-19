@@ -88,11 +88,11 @@ void quit() {
   exit(0);
 }
 
-void input(codes) {
+void input(List<int> codes) {
   done = true;
 }
 
-void tick(t) {
+void tick(Timer t) {
   draw();
   update();
   if (done) quit();
