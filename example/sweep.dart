@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:console/console.dart';
 
-enum State { playing, paused, won, lost, quit }
+enum State { playing, won, lost, quit }
 
 enum GridState { closed, opened }
 
@@ -17,6 +17,17 @@ class Cell {
 }
 
 State state = .playing;
+
+final instructions = [
+  'i - instructions',
+  'hjkl - move',
+  'f - flag/unflag',
+  'o - open cell',
+  'r - restart',
+  'q - quit',
+];
+
+bool showInstructions = true;
 
 final terminal = Terminal();
 final buffer = StringBuffer();
@@ -69,11 +80,10 @@ void draw() {
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       final cell = grid[row][col];
-      buffer.write(VT100.cursorPosition(y: row + 1, x: col + 1));
-      switch (cell) {
-        // case Cell(hasMine: true):
-        // buffer.write("*");
 
+      buffer.write(VT100.cursorPosition(y: row + 1, x: col + 1));
+
+      switch (cell) {
         case Cell(flagged: true):
           buffer.write(VT100.foreground(11));
           buffer.write('F');
@@ -115,19 +125,12 @@ void draw() {
   }
 
   // draw instructions
-  buffer.write(VT100.foreground(226));
-
-  final instructions = [
-    'hjkl - move',
-    'f    - flag/unflag',
-    'o    - open cell',
-    'r    - restart',
-    'q    - quit',
-  ];
-
-  for (var i = 0; i < instructions.length; i++) {
-    buffer.write(VT100.cursorPosition(y: 1 + i, x: cols + 2));
-    buffer.write(instructions[i]);
+  if (showInstructions) {
+    buffer.write(VT100.foreground(226));
+    for (var i = 0; i < instructions.length; i++) {
+      buffer.write(VT100.cursorPosition(y: 1 + i, x: cols + 2));
+      buffer.write(instructions[i]);
+    }
   }
 
   terminal.write(buffer);
@@ -238,6 +241,8 @@ void input(List<int> codes) {
   switch (str) {
     case 'q':
       quit();
+    case 'i':
+      showInstructions = !showInstructions;
     case 'r':
       init();
     case 'h':
@@ -276,7 +281,7 @@ void init() {
   cursor = Point<int>(0, 0);
   grid = .generate(rows, (y) => .generate(cols, (x) => Cell(.closed)));
   //final numMines = max((sqrt(cols * rows) / 4.0).round(), 1);
-  final numMines = 10;
+  final numMines = 2;
   final mines = List<Point<int>>.generate(numMines, genMine);
   for (final mine in mines) {
     grid[mine.y][mine.x].hasMine = true;
