@@ -14,27 +14,17 @@ class Terminal {
   }
 
   // get width of terminal
-  int get width {
-    return stdout.terminalColumns;
-  }
+  int get width => stdout.terminalColumns;
 
   // get height of terminal
-  int get height {
-    return stdout.terminalLines;
-  }
+  int get height => stdout.terminalLines;
 
   // watch for input
-  Stream<List<int>> get input {
-    return stdin.asBroadcastStream();
-  }
+  Stream<List<int>> get input => stdin.asBroadcastStream();
 
   // watch for resize signal
-  Stream<ProcessSignal> get resize {
-    return ProcessSignal.sigwinch.watch();
-  }
+  Stream<ProcessSignal> get resize => ProcessSignal.sigwinch.watch();
 
   // write to stdout
-  void write(Object? str) {
-    stdout.write(str);
-  }
+  void write(Object? str) => stdout.write(str);
 }

@@ -14,7 +14,7 @@ void main() {
     });
 
     test('erase', () {
-      expect(VT100.erase(), '\x1b[H\x1b[J');
+      expect(VT100.homeAndErase(), '\x1b[H\x1b[J');
     });
 
     test('foreground', () {
@@ -30,8 +30,10 @@ void main() {
     });
 
     test('combine two VT100 commands', () {
-      expect(VT100.foreground(1) + VT100.background(6),
-          '\x1b[38;5;1m\x1b[48;5;6m');
+      expect(
+        VT100.foreground(1) + VT100.background(6),
+        '\x1b[38;5;1m\x1b[48;5;6m',
+      );
     });
   });
 }
