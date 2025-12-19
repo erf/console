@@ -1,6 +1,6 @@
 name: console
-description: lib for interactive console apps using dart.io and vt100
-version: 0.0.1
+description: minimal lib for interactive console apps
+version: 0.1.0
 homepage: https://github.com/erf/console
 
 environment:

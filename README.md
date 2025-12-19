@@ -9,7 +9,7 @@ No dependencies. Just pure Dart.
 - window resize events
 - async input stream
 - buffered input
-- basic VT 100 (move cursor, colors, clear screen, etc)
+- basic VT 100 codes (move cursor, colors, clear screen, etc)
 
 ## Examples (see `example/` folder)
 
