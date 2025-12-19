@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:console/console.dart';
 
-enum State { playing, won, lost, quit }
+enum State { playing, lost, won, quit }
 
-enum GridState { closed, opened }
+enum GridState { closed, open }
 
 class Cell {
   GridState state;
@@ -19,25 +19,29 @@ class Cell {
 State state = .playing;
 
 final instructions = [
-  'i - instructions',
   'hjkl - move',
   'f - flag/unflag',
   'o - open cell',
   'r - restart',
+  'i - instructions',
   'q - quit',
 ];
+
+String info = '';
 
 bool showInstructions = true;
 
 final terminal = Terminal();
-final buffer = StringBuffer();
+final buffer = VT100Buffer();
 final random = Random();
 
-final height = terminal.height;
-final width = terminal.width;
+var height = terminal.height;
+var width = terminal.width;
 
 final rows = 9;
 final cols = 9;
+
+final numMines = 10;
 
 var cursor = Point<int>(0, 0);
 
@@ -70,12 +74,12 @@ Point<int> genMine(int index) {
 }
 
 void draw() {
-  buffer.write(VT100.background(0));
-  buffer.write(VT100.homeAndErase());
+  buffer.background(0);
+  buffer.homeAndErase();
 
   // draw grid
-  buffer.write(VT100.foreground(7));
-  buffer.write(VT100.background(238));
+  buffer.foreground(7);
+  buffer.background(238);
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
@@ -85,15 +89,15 @@ void draw() {
 
       switch (cell) {
         case Cell(flagged: true):
-          buffer.write(VT100.foreground(11));
+          buffer.foreground(11);
           buffer.write('F');
-          buffer.write(VT100.foreground(7));
+          buffer.foreground(7);
 
-        case Cell(state: .opened):
+        case Cell(state: .open):
           if (cell.hasMine) {
-            buffer.write(VT100.foreground(9));
+            buffer.foreground(9);
             buffer.write('*');
-            buffer.write(VT100.foreground(7));
+            buffer.foreground(7);
           } else if (cell.neighborMines > 0) {
             buffer.write('${cell.neighborMines}');
           } else {
@@ -108,29 +112,44 @@ void draw() {
   }
 
   // draw cursor
-  buffer.write(VT100.cursorPosition(y: cursor.y + 1, x: cursor.x + 1));
+  buffer.cursorPosition(y: cursor.y + 1, x: cursor.x + 1);
   buffer.write('@');
 
-  // draw game over
+  // draw game lost
   if (state == .lost) {
-    buffer.write(VT100.foreground(226));
+    buffer.foreground(226);
     final str = 'Game Over';
-    buffer.write(
-      VT100.cursorPosition(
-        y: (height / 2).round(),
-        x: (width / 2 - str.length / 2).round(),
-      ),
+    buffer.cursorPosition(
+      y: (height / 2).round(),
+      x: (width / 2 - str.length / 2).round(),
+    );
+    buffer.write(str);
+  }
+
+  // draw game won
+  if (state == .won) {
+    buffer.foreground(226);
+    final str = 'You won!';
+    buffer.cursorPosition(
+      y: (height / 2).round(),
+      x: (width / 2 - str.length / 2).round(),
     );
     buffer.write(str);
   }
 
   // draw instructions
   if (showInstructions) {
-    buffer.write(VT100.foreground(226));
+    buffer.foreground(226);
     for (var i = 0; i < instructions.length; i++) {
-      buffer.write(VT100.cursorPosition(y: 1 + i, x: cols + 2));
+      buffer.cursorPosition(y: 1 + i, x: cols + 2);
       buffer.write(instructions[i]);
     }
+  }
+
+  // test show win condition or some other info
+  if (info.isNotEmpty) {
+    buffer.cursorPosition(y: 1 + instructions.length + 1, x: cols + 2);
+    buffer.write(info);
   }
 
   terminal.write(buffer);
@@ -151,16 +170,17 @@ void flag() {
 
 void open() {
   final cell = grid[cursor.y][cursor.x];
-  if (cell.state == GridState.opened) {
+  if (cell.state == GridState.open) {
     return;
   }
-  cell.state = GridState.opened;
+  cell.state = GridState.open;
   if (cell.hasMine) {
     state = State.lost;
-  } else if (checkWinCondition()) {
-    state = .won;
   } else {
     openAround(cursor);
+  }
+  if (checkWinCondition()) {
+    state = .won;
   }
 }
 
@@ -169,9 +189,9 @@ bool checkWinCondition() {
   int numOpen = 0;
   int numMines = 0;
   for (var y = 0; y < rows; y++) {
-    for (var x = 0; x < rows; x++) {
+    for (var x = 0; x < cols; x++) {
       final cell = grid[y][x];
-      if (cell.state == .opened) {
+      if (cell.state == .open) {
         numOpen++;
       }
       if (cell.hasMine) {
@@ -179,6 +199,8 @@ bool checkWinCondition() {
       }
     }
   }
+  //info = 'num open $numOpen num mines $numMines';
+
   int numTotalCells = rows * cols;
   if ((numOpen + numMines) == numTotalCells) {
     return true;
@@ -198,7 +220,7 @@ void openAround(Point<int> p) {
   if (cell.hasMine) {
     return;
   }
-  cell.state = .opened;
+  cell.state = .open;
   cell.neighborMines = neighbourMines(p);
 
   if (cell.neighborMines != 0) {
@@ -263,14 +285,16 @@ void input(List<int> codes) {
 }
 
 void resize(ProcessSignal signal) {
+  width = terminal.width;
+  height = terminal.height;
   draw();
 }
 
 void quit() {
   state = .quit;
-  buffer.write(VT100.cursorVisible(true));
-  buffer.write(VT100.resetStyles());
-  buffer.write(VT100.homeAndErase());
+  buffer.cursorVisible(true);
+  buffer.resetStyles();
+  buffer.homeAndErase();
   terminal.write(buffer);
   terminal.rawMode = false;
   exit(0);
@@ -280,8 +304,6 @@ void init() {
   state = .playing;
   cursor = Point<int>(0, 0);
   grid = .generate(rows, (y) => .generate(cols, (x) => Cell(.closed)));
-  //final numMines = max((sqrt(cols * rows) / 4.0).round(), 1);
-  final numMines = 2;
   final mines = List<Point<int>>.generate(numMines, genMine);
   for (final mine in mines) {
     grid[mine.y][mine.x].hasMine = true;
