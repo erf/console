@@ -198,15 +198,15 @@ void open() {
     return;
   }
   final cell = grid[cursor.y][cursor.x];
-  if (cell.state == .open) {
+  if (cell.state == .open || cell.flagged) {
     return;
   }
-  cell.state = .open;
   if (cell.hasMine) {
+    cell.state = .open;
     state = .lost;
-  } else {
-    openAround(cursor);
+    return;
   }
+  openAround(cursor);
   if (checkWinCondition()) {
     state = .won;
   }
