@@ -111,6 +111,7 @@ void update() {
     food[foodIndex] = createFood();
     score++;
     if (score > highScore) highScore = score;
+    showMessage('+1');
     restartTimer(); // speed up!
   }
 
@@ -121,7 +122,7 @@ void update() {
     }
     score += currentBonus!.value;
     if (score > highScore) highScore = score;
-    showBonusMessage('+${currentBonus!.value} ${currentBonus!.glyph}');
+    showMessage('+${currentBonus!.value} ${currentBonus!.glyph}');
     clearBonus();
     restartTimer();
   }
@@ -140,10 +141,10 @@ void clearBonus() {
   bonusExpireTimer = null;
 }
 
-void showBonusMessage(String msg) {
+void showMessage(String msg) {
   bonusMessage = msg;
   messageTimer?.cancel();
-  messageTimer = Timer(Duration(seconds: 2), () {
+  messageTimer = Timer(Duration(milliseconds: 500), () {
     bonusMessage = null;
   });
 }
