@@ -92,7 +92,11 @@ void draw() {
             buffer.write('*');
             buffer.write(VT100.foreground(7));
           } else if (cell.neighborMines > 0) {
+            // Classic minesweeper colors for numbers
+            final numColors = [0, 21, 28, 160, 57, 88, 30, 0, 240];
+            buffer.write(VT100.foreground(numColors[cell.neighborMines]));
             buffer.write('${cell.neighborMines}');
+            buffer.write(VT100.foreground(7));
           } else {
             buffer.write(' ');
           }
