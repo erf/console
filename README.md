@@ -13,6 +13,7 @@ dart pub add termio
 ## Usage
 
 ```dart
+import 'dart:io';
 import 'package:termio/termio.dart';
 
 void main() {
@@ -22,9 +23,25 @@ void main() {
   terminal.write(VT100.homeAndErase());
   terminal.write(VT100.foreground(6));
   terminal.write(VT100.bold());
-  terminal.write('Hello, Terminal!');
+  terminal.write('Hello, Terminal! Press q to quit.');
   terminal.write(VT100.resetStyles());
-  terminal.rawMode = false;
+
+  // Listen for keyboard input
+  terminal.input.listen((codes) {
+    final str = String.fromCharCodes(codes);
+    if (str == 'q') {
+      terminal.write(VT100.cursorVisible(true));
+      terminal.write(VT100.resetStyles());
+      terminal.write(VT100.homeAndErase());
+      terminal.rawMode = false;
+      exit(0);
+    }
+  });
+
+  // Listen for terminal resize
+  terminal.resize.listen((_) {
+    terminal.write('Resized: ${terminal.width}x${terminal.height}');
+  });
 }
 ```
 
