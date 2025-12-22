@@ -191,18 +191,24 @@ void draw() {
   buffer.clear();
 }
 
+void quit() {
+  state = State.quit;
+  gameTimer?.cancel();
+  buffer.write(VT100.cursorVisible(true));
+  buffer.write(VT100.resetStyles());
+  buffer.write(VT100.homeAndErase());
+  terminal.write(buffer);
+  buffer.clear();
+  terminal.rawMode = false;
+  exit(0);
+}
+
 void input(List<int> codes) {
   final str = String.fromCharCodes(codes);
 
   switch (str) {
     case 'q':
-      state = State.quit;
-      buffer.write(VT100.cursorVisible(true));
-      buffer.write(VT100.resetStyles());
-      buffer.write(VT100.homeAndErase());
-      terminal.write(buffer);
-      terminal.rawMode = false;
-      exit(0);
+      quit();
 
     case 'p':
       if (state == State.gameOver) {
@@ -279,6 +285,10 @@ void init() {
 void main() {
   terminal.rawMode = true;
   buffer.write(VT100.cursorVisible(false));
+
+  // Handle Ctrl+C gracefully
+  ProcessSignal.sigint.watch().listen((_) => quit());
+
   init();
   terminal.input.listen(input);
 }
