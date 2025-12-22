@@ -65,16 +65,11 @@ void update() {
     state = State.gameOver;
   }
 
-  // check if snake hit itself
-  for (var i = 0; i < snake.length - 1; i++) {
-    final p = snake[i];
-    for (var j = i + 1; j < snake.length; j++) {
-      final p1 = snake[j];
-      if (p.x == p1.x && p.y == p1.y) {
-        state = State.gameOver;
-        return;
-      }
-    }
+  // check if snake hit itself (O(1) lookup)
+  final body = snake.skip(1).toSet();
+  if (body.contains(snake.first)) {
+    state = State.gameOver;
+    return;
   }
 
   // check if food was eaten and create new food
