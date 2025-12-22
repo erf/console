@@ -36,10 +36,9 @@ final random = Random();
 var height = terminal.height;
 var width = terminal.width;
 
-final rows = 9;
-final cols = 9;
-
-final numMines = 10;
+var rows = 9;
+var cols = 9;
+var numMines = 10;
 
 var cursor = Point<int>(0, 0);
 
@@ -343,7 +342,24 @@ void init() {
   }
 }
 
-void main() {
+void main(List<String> args) {
+  // Parse arguments: [width] [height] [mines]
+  if (args.isNotEmpty) {
+    cols = int.tryParse(args[0]) ?? cols;
+  }
+  if (args.length > 1) {
+    rows = int.tryParse(args[1]) ?? rows;
+  }
+  if (args.length > 2) {
+    numMines = int.tryParse(args[2]) ?? numMines;
+  }
+
+  // Ensure mines don't exceed available cells (leave at least 1 safe cell)
+  final maxMines = (rows * cols) - 1;
+  if (numMines > maxMines) {
+    numMines = maxMines;
+  }
+
   terminal.rawMode = true;
   buffer.write(VT100.cursorVisible(false));
   init();
