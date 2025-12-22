@@ -4,14 +4,14 @@ import 'dart:math';
 
 import 'package:console/console.dart';
 
-final term = Terminal();
-final buf = VT100Buffer();
+final terminal = Terminal();
+final buffer = StringBuffer();
 
-final height = term.height;
-final width = term.width;
+final height = terminal.height;
+final width = terminal.width;
 
-final rows = term.height - 4;
-final cols = term.width;
+final rows = terminal.height - 4;
+final cols = terminal.width;
 
 enum State { playing, paused, gameOver, quit }
 
@@ -79,50 +79,52 @@ void update() {
 }
 
 void draw() {
-  buf.background(0);
-  buf.homeAndErase();
+  buffer.write(VT100.background(0));
+  buffer.write(VT100.homeAndErase());
 
   // draw wall
-  buf.foreground(7);
-  buf.background(238);
+  buffer.write(VT100.foreground(7));
+  buffer.write(VT100.background(238));
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       if (row == 0 || col == 0 || row == rows - 1 || col == cols - 1) {
-        buf.write('#');
+        buffer.write('#');
       } else {
-        buf.write(' ');
+        buffer.write(' ');
       }
     }
-    buf.write('\n');
+    buffer.write('\n');
   }
 
   // draw food
-  buf.foreground(9);
+  buffer.write(VT100.foreground(9));
   for (var f in food) {
-    buf.cursorPosition(y: f.y + 1, x: f.x + 1);
-    buf.write('o');
+    buffer.write(VT100.cursorPosition(y: f.y + 1, x: f.x + 1));
+    buffer.write('o');
   }
 
   // draw snake
-  buf.foreground(11);
+  buffer.write(VT100.foreground(11));
   for (var p in snake) {
-    buf.cursorPosition(y: p.y + 1, x: p.x + 1);
-    buf.write('s');
+    buffer.write(VT100.cursorPosition(y: p.y + 1, x: p.x + 1));
+    buffer.write('s');
   }
 
   // draw game over
   if (state == State.gameOver) {
-    buf.foreground(226);
+    buffer.write(VT100.foreground(226));
     final str = 'Game Over';
-    buf.cursorPosition(
-      y: (height / 2).round(),
-      x: (width / 2 - str.length / 2).round(),
+    buffer.write(
+      VT100.cursorPosition(
+        y: (height / 2).round(),
+        x: (width / 2 - str.length / 2).round(),
+      ),
     );
-    buf.write(str);
+    buffer.write(str);
   }
 
   // draw instructions
-  buf.foreground(226);
+  buffer.write(VT100.foreground(226));
 
   final instructions = [
     'hjkl - move',
@@ -132,12 +134,12 @@ void draw() {
   ];
 
   for (var i = 0; i < 4; i++) {
-    buf.cursorPosition(y: rows + 1 + i, x: 1);
-    buf.write(instructions[i]);
+    buffer.write(VT100.cursorPosition(y: rows + 1 + i, x: 1));
+    buffer.write(instructions[i]);
   }
 
-  term.write(buf);
-  buf.clear();
+  terminal.write(buffer);
+  buffer.clear();
 }
 
 void input(List<int> codes) {
@@ -146,11 +148,11 @@ void input(List<int> codes) {
   switch (str) {
     case 'q':
       state = State.quit;
-      buf.cursorVisible(true);
-      buf.resetStyles();
-      buf.homeAndErase();
-      term.write(buf);
-      term.rawMode = false;
+      buffer.write(VT100.cursorVisible(true));
+      buffer.write(VT100.resetStyles());
+      buffer.write(VT100.homeAndErase());
+      terminal.write(buffer);
+      terminal.rawMode = false;
       exit(0);
 
     case 'p':
@@ -215,9 +217,9 @@ void init() {
 }
 
 void main() {
-  term.rawMode = true;
-  buf.cursorVisible(false);
+  terminal.rawMode = true;
+  buffer.write(VT100.cursorVisible(false));
   init();
   Timer.periodic(Duration(milliseconds: 100), tick);
-  term.input.listen(input);
+  terminal.input.listen(input);
 }

@@ -32,7 +32,7 @@ String info = '';
 bool showInstructions = true;
 
 final terminal = Terminal();
-final buffer = VT100Buffer();
+final buffer = StringBuffer();
 final random = Random();
 
 var height = terminal.height;
@@ -74,12 +74,12 @@ Point<int> genMine(int index) {
 }
 
 void draw() {
-  buffer.background(0);
-  buffer.homeAndErase();
+  buffer.write(VT100.background(0));
+  buffer.write(VT100.homeAndErase());
 
   // draw grid
-  buffer.foreground(7);
-  buffer.background(238);
+  buffer.write(VT100.foreground(7));
+  buffer.write(VT100.background(238));
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
@@ -89,15 +89,14 @@ void draw() {
 
       switch (cell) {
         case Cell(flagged: true):
-          buffer.foreground(11);
+          buffer.write(VT100.foreground(11));
           buffer.write('F');
-          buffer.foreground(7);
-
+          buffer.write(VT100.foreground(7));
         case Cell(state: .open):
           if (cell.hasMine) {
-            buffer.foreground(9);
+            buffer.write(VT100.foreground(9));
             buffer.write('*');
-            buffer.foreground(7);
+            buffer.write(VT100.foreground(7));
           } else if (cell.neighborMines > 0) {
             buffer.write('${cell.neighborMines}');
           } else {
@@ -113,44 +112,50 @@ void draw() {
 
   // draw cursor
   if (state == .playing) {
-    buffer.cursorPosition(y: cursor.y + 1, x: cursor.x + 1);
+    buffer.write(VT100.cursorPosition(y: cursor.y + 1, x: cursor.x + 1));
     buffer.write('@');
   }
 
   // draw game lost
   if (state == .lost) {
-    buffer.foreground(226);
+    buffer.write(VT100.foreground(226));
     final str = 'Game Over';
-    buffer.cursorPosition(
-      y: (height / 2).round(),
-      x: (width / 2 - str.length / 2).round(),
+    buffer.write(
+      VT100.cursorPosition(
+        y: (height / 2).round(),
+        x: (width / 2 - str.length / 2).round(),
+      ),
     );
     buffer.write(str);
   }
 
   // draw game won
   if (state == .won) {
-    buffer.foreground(226);
+    buffer.write(VT100.foreground(226));
     final str = 'You won!';
-    buffer.cursorPosition(
-      y: (height / 2).round(),
-      x: (width / 2 - str.length / 2).round(),
+    buffer.write(
+      VT100.cursorPosition(
+        y: (height / 2).round(),
+        x: (width / 2 - str.length / 2).round(),
+      ),
     );
     buffer.write(str);
   }
 
   // draw instructions
   if (showInstructions) {
-    buffer.foreground(226);
+    buffer.write(VT100.foreground(226));
     for (var i = 0; i < instructions.length; i++) {
-      buffer.cursorPosition(y: 1 + i, x: cols + 2);
+      buffer.write(VT100.cursorPosition(y: 1 + i, x: cols + 2));
       buffer.write(instructions[i]);
     }
   }
 
   // test show win condition or some other info
   if (info.isNotEmpty) {
-    buffer.cursorPosition(y: 1 + instructions.length + 1, x: cols + 2);
+    buffer.write(
+      VT100.cursorPosition(y: 1 + instructions.length + 1, x: cols + 2),
+    );
     buffer.write(info);
   }
 
@@ -302,9 +307,9 @@ void resize(ProcessSignal signal) {
 }
 
 void quit() {
-  buffer.cursorVisible(true);
-  buffer.resetStyles();
-  buffer.homeAndErase();
+  buffer.write(VT100.cursorVisible(true));
+  buffer.write(VT100.resetStyles());
+  buffer.write(VT100.homeAndErase());
   terminal.write(buffer);
   terminal.rawMode = false;
   exit(0);

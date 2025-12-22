@@ -1,8 +1,8 @@
 import 'dart:io';
 
-// provides a simple interface to the terminal
+/// A terminal interface for reading input and writing output
 class Terminal {
-  // set raw mode
+  /// Set raw mode for terminal input
   set rawMode(bool rawMode) {
     if (rawMode) {
       stdin.echoMode = false;
@@ -13,18 +13,18 @@ class Terminal {
     }
   }
 
-  // get width of terminal
+  /// Get width of terminal
   int get width => stdout.terminalColumns;
 
-  // get height of terminal
+  /// Get height of terminal
   int get height => stdout.terminalLines;
 
-  // watch for input
+  /// Watch for terminal input
   Stream<List<int>> get input => stdin.asBroadcastStream();
 
-  // watch for resize signal
+  /// Watch for terminal resize events
   Stream<ProcessSignal> get resize => ProcessSignal.sigwinch.watch();
 
-  // write to stdout
+  /// Write to stdout
   void write(Object? str) => stdout.write(str);
 }

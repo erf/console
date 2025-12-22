@@ -4,16 +4,20 @@ import 'dart:async';
 
 import 'package:console/console.dart';
 
-final term = Terminal();
-final vt = VT100Buffer();
-final r = Random();
+final terminal = Terminal();
+final buffer = StringBuffer();
+final random = Random();
 
-final rows = term.height;
-final cols = term.width;
+final rows = terminal.height;
+final cols = terminal.width;
 final size = rows * cols;
 
 final temp = List<bool>.filled(size, false);
-final data = List<bool>.generate(size, (i) => r.nextBool(), growable: false);
+final data = List<bool>.generate(
+  size,
+  (i) => random.nextBool(),
+  growable: false,
+);
 
 bool done = false;
 
@@ -29,20 +33,20 @@ final neighbors = [
 ];
 
 void draw() {
-  vt.background(0);
-  vt.foreground(6);
-  vt.homeAndErase();
+  buffer.write(VT100.background(0));
+  buffer.write(VT100.foreground(6));
+  buffer.write(VT100.homeAndErase());
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       var index = row * rows + col;
-      vt.write(data[index] ? '#' : ' ');
+      buffer.write(data[index] ? '#' : ' ');
     }
-    vt.write('\n');
+    buffer.write('\n');
   }
 
-  term.write(vt);
-  vt.clear();
+  terminal.write(buffer);
+  buffer.clear();
 }
 
 int numLiveNeighbors(int row, int col) {
@@ -80,11 +84,11 @@ void update() {
 }
 
 void quit() {
-  vt.homeAndErase();
-  vt.resetStyles();
-  vt.cursorVisible(true);
-  term.write(vt);
-  term.rawMode = false;
+  buffer.write(VT100.homeAndErase());
+  buffer.write(VT100.resetStyles());
+  buffer.write(VT100.cursorVisible(true));
+  terminal.write(buffer);
+  terminal.rawMode = false;
   exit(0);
 }
 
@@ -99,8 +103,8 @@ void tick(Timer t) {
 }
 
 void main(List<String> arguments) {
-  term.rawMode = true;
-  term.write(VT100.cursorVisible(false));
-  term.input.listen(input);
+  terminal.rawMode = true;
+  terminal.write(VT100.cursorVisible(false));
+  terminal.input.listen(input);
   Timer.periodic(Duration(milliseconds: 200), tick);
 }

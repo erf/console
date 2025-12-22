@@ -2,41 +2,45 @@ import 'dart:io';
 
 import 'package:console/console.dart';
 
-final term = Terminal();
-final vt = VT100Buffer();
+final terminal = Terminal();
+final buffer = StringBuffer();
 
-var cols = term.width;
-var rows = term.height;
+var cols = terminal.width;
+var rows = terminal.height;
 
 void quit() {
-  vt.homeAndErase();
-  vt.resetStyles();
-  vt.cursorVisible(true);
-  term.write(vt);
-  term.rawMode = false;
+  buffer.write(VT100.homeAndErase());
+  buffer.write(VT100.resetStyles());
+  buffer.write(VT100.cursorVisible(true));
+  terminal.write(buffer);
+  terminal.rawMode = false;
   exit(0);
 }
 
 void draw() {
-  vt.homeAndErase();
-  vt.foreground(6);
+  buffer.write(VT100.homeAndErase());
+  buffer.write(VT100.foreground(6));
   final str0 = 'Hello';
   final str1 = 'Press \'q\' to quit';
-  vt.cursorPosition(
-    y: (rows / 2).round() - 1,
-    x: (cols / 2).round() - (str0.length / 2).round(),
+  buffer.write(
+    VT100.cursorPosition(
+      y: (rows / 2).round() - 1,
+      x: (cols / 2).round() - (str0.length / 2).round(),
+    ),
   );
-  vt.write(str0);
-  vt.cursorPosition(
-    y: (rows / 2).round() + 1,
-    x: (cols / 2).round() - (str1.length / 2).round(),
+  buffer.write(str0);
+  buffer.write(
+    VT100.cursorPosition(
+      y: (rows / 2).round() + 1,
+      x: (cols / 2).round() - (str1.length / 2).round(),
+    ),
   );
-  vt.write(str1);
+  buffer.write(str1);
   final str = 'rows $rows cols $cols';
-  vt.cursorPosition(y: rows + 1, x: cols - str.length);
-  vt.write(str);
-  term.write(vt);
-  vt.clear();
+  buffer.write(VT100.cursorPosition(y: rows + 1, x: cols - str.length));
+  buffer.write(str);
+  terminal.write(buffer);
+  buffer.clear();
 }
 
 void input(List<int> codes) {
@@ -47,15 +51,15 @@ void input(List<int> codes) {
 }
 
 void resize(ProcessSignal signal) {
-  cols = term.width;
-  rows = term.height;
+  cols = terminal.width;
+  rows = terminal.height;
   draw();
 }
 
 void main() {
-  term.rawMode = true;
-  term.write(VT100.cursorVisible(false));
+  terminal.rawMode = true;
+  terminal.write(VT100.cursorVisible(false));
   draw();
-  term.input.listen(input);
-  term.resize.listen(resize);
+  terminal.input.listen(input);
+  terminal.resize.listen(resize);
 }

@@ -2,30 +2,30 @@ import 'dart:io';
 
 import 'package:console/console.dart';
 
-final term = Terminal();
-final vt = VT100Buffer();
+final terminal = Terminal();
+final buffer = StringBuffer();
 
-int rows = term.height;
-int cols = term.width;
+int rows = terminal.height;
+int cols = terminal.width;
 
 void draw() {
-  vt.background(0);
-  vt.homeAndErase();
+  buffer.write(VT100.background(0));
+  buffer.write(VT100.homeAndErase());
 
   var color = 0;
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
-      vt.cursorPosition(y: row + 1, x: col + 1);
-      vt.background(color);
-      vt.write(' ');
+      buffer.write(VT100.cursorPosition(y: row + 1, x: col + 1));
+      buffer.write(VT100.background(color));
+      buffer.write(' ');
       ++color;
       if (color >= 256) {
         break;
       }
     }
   }
-  term.write(vt);
-  vt.clear();
+  terminal.write(buffer);
+  buffer.clear();
 }
 
 void input(List<int> codes) {
@@ -33,27 +33,27 @@ void input(List<int> codes) {
   switch (str) {
     case 'q':
       {
-        vt.cursorVisible(true);
-        vt.cursorPosition(y: 1, x: 1);
-        vt.resetStyles();
-        vt.homeAndErase();
-        term.write(vt);
-        vt.clear();
+        buffer.write(VT100.cursorVisible(true));
+        buffer.write(VT100.cursorPosition(y: 1, x: 1));
+        buffer.write(VT100.resetStyles());
+        buffer.write(VT100.homeAndErase());
+        terminal.write(buffer);
+        buffer.clear();
         exit(0);
       }
   }
 }
 
 void resize(ProcessSignal event) {
-  rows = term.height;
-  cols = term.width;
+  rows = terminal.height;
+  cols = terminal.width;
   draw();
 }
 
 void main() {
-  term.rawMode = true;
-  term.write(VT100.cursorVisible(false));
+  terminal.rawMode = true;
+  terminal.write(VT100.cursorVisible(false));
   draw();
-  term.input.listen(input);
-  term.resize.listen(resize);
+  terminal.input.listen(input);
+  terminal.resize.listen(resize);
 }
