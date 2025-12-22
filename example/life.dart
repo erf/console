@@ -39,7 +39,7 @@ void draw() {
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
-      var index = row * rows + col;
+      var index = row * cols + col;
       buffer.write(data[index] ? '#' : ' ');
     }
     buffer.write('\n');
@@ -56,7 +56,7 @@ int numLiveNeighbors(int row, int col) {
     if (x < 0 || x >= cols) continue;
     var y = row + neighbors[i][1];
     if (y < 0 || y >= rows) continue;
-    sum += data[y * rows + x] ? 1 : 0;
+    sum += data[y * cols + x] ? 1 : 0;
   }
   return sum;
 }
@@ -75,7 +75,7 @@ void update() {
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       var n = numLiveNeighbors(row, col);
-      var index = row * rows + col;
+      var index = row * cols + col;
       var v = data[index];
       temp[index] = (v == true && (n == 2 || n == 3)) || (v == false && n == 3);
     }
