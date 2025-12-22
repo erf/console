@@ -175,18 +175,18 @@ void restartTimer() {
 }
 
 void draw() {
-  buffer.write(VT100.background(Colors.bg));
-  buffer.write(VT100.homeAndErase());
+  buffer.write(Ansi.bgIndex(Colors.bg));
+  buffer.write(Ansi.clearScreen());
 
   // draw wall and floor
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       if (row == 0 || col == 0 || row == rows - 1 || col == cols - 1) {
-        buffer.write(VT100.foreground(Colors.wallFg));
-        buffer.write(VT100.background(Colors.wall));
+        buffer.write(Ansi.fgIndex(Colors.wallFg));
+        buffer.write(Ansi.bgIndex(Colors.wall));
         buffer.write('#');
       } else {
-        buffer.write(VT100.background(Colors.bg));
+        buffer.write(Ansi.bgIndex(Colors.bg));
         buffer.write(' ');
       }
     }
@@ -194,94 +194,92 @@ void draw() {
   }
 
   // reset background for game elements
-  buffer.write(VT100.background(Colors.bg));
+  buffer.write(Ansi.bgIndex(Colors.bg));
 
   // draw food
   for (var f in food) {
     if (f.type.expireSec != null) {
-      buffer.write(VT100.bold());
+      buffer.write(Ansi.bold());
     }
-    buffer.write(VT100.foreground(f.type.color));
-    buffer.write(VT100.cursorPosition(y: f.pos.y + 1, x: f.pos.x + 1));
+    buffer.write(Ansi.fgIndex(f.type.color));
+    buffer.write(Ansi.cursor(y: f.pos.y + 1, x: f.pos.x + 1));
     buffer.write(f.type.glyph);
     if (f.type.expireSec != null) {
-      buffer.write(VT100.resetStyles());
-      buffer.write(VT100.background(Colors.bg));
+      buffer.write(Ansi.reset());
+      buffer.write(Ansi.bgIndex(Colors.bg));
     }
   }
 
   // draw snake body
-  buffer.write(VT100.foreground(Colors.snakeBody));
+  buffer.write(Ansi.fgIndex(Colors.snakeBody));
   for (var i = 1; i < snake.length; i++) {
     final p = snake[i];
-    buffer.write(VT100.cursorPosition(y: p.y + 1, x: p.x + 1));
+    buffer.write(Ansi.cursor(y: p.y + 1, x: p.x + 1));
     buffer.write('○');
   }
 
   // draw snake head
   if (snake.isNotEmpty) {
-    buffer.write(VT100.foreground(Colors.snakeHead));
-    buffer.write(
-      VT100.cursorPosition(y: snake.first.y + 1, x: snake.first.x + 1),
-    );
+    buffer.write(Ansi.fgIndex(Colors.snakeHead));
+    buffer.write(Ansi.cursor(y: snake.first.y + 1, x: snake.first.x + 1));
     buffer.write(headChar());
   }
 
   // draw game over
   if (state == State.gameOver) {
-    buffer.write(VT100.foreground(Colors.text));
-    buffer.write(VT100.bold());
+    buffer.write(Ansi.fgIndex(Colors.text));
+    buffer.write(Ansi.bold());
     final str = ' GAME OVER ';
     buffer.write(
-      VT100.cursorPosition(
+      Ansi.cursor(
         y: (height / 2).round(),
         x: (width / 2 - str.length / 2).round(),
       ),
     );
     buffer.write(str);
-    buffer.write(VT100.resetStyles());
+    buffer.write(Ansi.reset());
   }
 
   // draw paused
   if (state == State.paused) {
-    buffer.write(VT100.foreground(Colors.text));
-    buffer.write(VT100.bold());
+    buffer.write(Ansi.fgIndex(Colors.text));
+    buffer.write(Ansi.bold());
     final str = ' PAUSED ';
     buffer.write(
-      VT100.cursorPosition(
+      Ansi.cursor(
         y: (height / 2).round(),
         x: (width / 2 - str.length / 2).round(),
       ),
     );
     buffer.write(str);
-    buffer.write(VT100.resetStyles());
+    buffer.write(Ansi.reset());
   }
 
   // draw message
   if (message != null) {
-    buffer.write(VT100.foreground(Colors.text));
-    buffer.write(VT100.bold());
+    buffer.write(Ansi.fgIndex(Colors.text));
+    buffer.write(Ansi.bold());
     buffer.write(
-      VT100.cursorPosition(
+      Ansi.cursor(
         y: (height / 2 - 2).round(),
         x: (width / 2 - message!.length / 2).round(),
       ),
     );
     buffer.write(message!);
-    buffer.write(VT100.resetStyles());
-    buffer.write(VT100.background(Colors.bg));
+    buffer.write(Ansi.reset());
+    buffer.write(Ansi.bgIndex(Colors.bg));
   }
 
   // draw score
-  buffer.write(VT100.foreground(Colors.text));
+  buffer.write(Ansi.fgIndex(Colors.text));
 
-  buffer.write(VT100.cursorPosition(y: rows + 1, x: 1));
+  buffer.write(Ansi.cursor(y: rows + 1, x: 1));
   buffer.write('Score: $score  High: $highScore  Speed: ${tickSpeed()}ms');
 
   final instructions = ['hjkl/arrows: move', 'p: pause  r: restart  q: quit'];
 
   for (var i = 0; i < instructions.length; i++) {
-    buffer.write(VT100.cursorPosition(y: rows + 2 + i, x: 1));
+    buffer.write(Ansi.cursor(y: rows + 2 + i, x: 1));
     buffer.write(instructions[i]);
   }
 
@@ -296,9 +294,9 @@ void quit() {
   for (var f in food) {
     f.expireTimer?.cancel();
   }
-  buffer.write(VT100.cursorVisible(true));
-  buffer.write(VT100.resetStyles());
-  buffer.write(VT100.homeAndErase());
+  buffer.write(Ansi.cursorVisible(true));
+  buffer.write(Ansi.reset());
+  buffer.write(Ansi.clearScreen());
   terminal.write(buffer);
   buffer.clear();
   terminal.rawMode = false;
@@ -328,7 +326,7 @@ void input(List<int> codes) {
       break;
 
     case 'h':
-    case '${VT100.e}[D': // left arrow
+    case Keys.arrowLeft:
       final d = Point(-1, 0);
       if (!isZero(dir + d)) {
         dir = d;
@@ -336,7 +334,7 @@ void input(List<int> codes) {
       break;
 
     case 'j':
-    case '${VT100.e}[B': // down arrow
+    case Keys.arrowDown:
       final d = Point(0, 1);
       if (!isZero(dir + d)) {
         dir = d;
@@ -344,7 +342,7 @@ void input(List<int> codes) {
       break;
 
     case 'k':
-    case '${VT100.e}[A': // up arrow
+    case Keys.arrowUp:
       final d = Point(0, -1);
       if (!isZero(dir + d)) {
         dir = d;
@@ -352,7 +350,7 @@ void input(List<int> codes) {
       break;
 
     case 'l':
-    case '${VT100.e}[C': // right arrow
+    case Keys.arrowRight:
       final d = Point(1, 0);
       if (!isZero(dir + d)) {
         dir = d;
@@ -401,7 +399,7 @@ void init() {
 
 void main() {
   terminal.rawMode = true;
-  buffer.write(VT100.cursorVisible(false));
+  buffer.write(Ansi.cursorVisible(false));
 
   // Handle Ctrl+C gracefully
   ProcessSignal.sigint.watch().listen((_) => quit());

@@ -33,9 +33,9 @@ final neighbors = [
 ];
 
 void draw() {
-  buffer.write(VT100.background(0));
-  buffer.write(VT100.foreground(6));
-  buffer.write(VT100.homeAndErase());
+  buffer.write(Ansi.bgIndex(0));
+  buffer.write(Ansi.fgIndex(6));
+  buffer.write(Ansi.clearScreen());
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
@@ -84,9 +84,9 @@ void update() {
 }
 
 void quit() {
-  buffer.write(VT100.cursorVisible(true));
-  buffer.write(VT100.resetStyles());
-  buffer.write(VT100.homeAndErase());
+  buffer.write(Ansi.cursorVisible(true));
+  buffer.write(Ansi.reset());
+  buffer.write(Ansi.clearScreen());
   terminal.write(buffer);
   terminal.rawMode = false;
   exit(0);
@@ -104,7 +104,7 @@ void tick(Timer t) {
 
 void main(List<String> arguments) {
   terminal.rawMode = true;
-  terminal.write(VT100.cursorVisible(false));
+  terminal.write(Ansi.cursorVisible(false));
   terminal.input.listen(input);
   Timer.periodic(Duration(milliseconds: 200), tick);
 }

@@ -16,7 +16,7 @@ class Cell {
   Cell(this.state);
 }
 
-State state = .playing;
+State state = State.playing;
 
 final instructions = [
   'hjkl/arrows - move',
@@ -67,40 +67,40 @@ Point<int> createMine() {
 }
 
 void draw() {
-  buffer.write(VT100.background(0));
-  buffer.write(VT100.homeAndErase());
+  buffer.write(Ansi.bgIndex(0));
+  buffer.write(Ansi.clearScreen());
 
   // draw grid
-  buffer.write(VT100.foreground(7));
-  buffer.write(VT100.background(238));
+  buffer.write(Ansi.fgIndex(7));
+  buffer.write(Ansi.bgIndex(238));
 
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       final cell = grid[row][col];
 
-      buffer.write(VT100.cursorPosition(y: row + 1, x: col + 1));
+      buffer.write(Ansi.cursor(y: row + 1, x: col + 1));
 
       switch (cell) {
         case Cell(flagged: true):
-          buffer.write(VT100.foreground(11));
+          buffer.write(Ansi.fgIndex(11));
           buffer.write('F');
-          buffer.write(VT100.foreground(7));
-        case Cell(state: .open):
+          buffer.write(Ansi.fgIndex(7));
+        case Cell(state: GridState.open):
           if (cell.hasMine) {
-            buffer.write(VT100.foreground(9));
+            buffer.write(Ansi.fgIndex(9));
             buffer.write('*');
-            buffer.write(VT100.foreground(7));
+            buffer.write(Ansi.fgIndex(7));
           } else if (cell.neighborMines > 0) {
             // Classic minesweeper colors for numbers
             final numColors = [0, 21, 28, 160, 57, 88, 30, 0, 240];
-            buffer.write(VT100.foreground(numColors[cell.neighborMines]));
+            buffer.write(Ansi.fgIndex(numColors[cell.neighborMines]));
             buffer.write('${cell.neighborMines}');
-            buffer.write(VT100.foreground(7));
+            buffer.write(Ansi.fgIndex(7));
           } else {
             buffer.write(' ');
           }
 
-        case Cell(state: .closed):
+        case Cell(state: GridState.closed):
           buffer.write('#');
       }
     }
@@ -108,57 +108,57 @@ void draw() {
   }
 
   // draw cursor
-  if (state == .playing) {
-    buffer.write(VT100.cursorPosition(y: cursor.y + 1, x: cursor.x + 1));
+  if (state == State.playing) {
+    buffer.write(Ansi.cursor(y: cursor.y + 1, x: cursor.x + 1));
     buffer.write('@');
   }
 
   // draw game lost
-  if (state == .lost) {
+  if (state == State.lost) {
     // reveal all mines
     for (var row = 0; row < rows; row++) {
       for (var col = 0; col < cols; col++) {
         final cell = grid[row][col];
         if (cell.hasMine && !cell.flagged) {
-          buffer.write(VT100.cursorPosition(y: row + 1, x: col + 1));
-          buffer.write(VT100.foreground(9));
+          buffer.write(Ansi.cursor(y: row + 1, x: col + 1));
+          buffer.write(Ansi.fgIndex(9));
           buffer.write('*');
         }
       }
     }
-    buffer.write(VT100.foreground(226));
-    buffer.write(VT100.bold());
+    buffer.write(Ansi.fgIndex(226));
+    buffer.write(Ansi.bold());
     final str = 'Game Over';
     buffer.write(
-      VT100.cursorPosition(
+      Ansi.cursor(
         y: (height / 2).round(),
         x: (width / 2 - str.length / 2).round(),
       ),
     );
     buffer.write(str);
-    buffer.write(VT100.resetStyles());
+    buffer.write(Ansi.reset());
   }
 
   // draw game won
-  if (state == .won) {
-    buffer.write(VT100.foreground(226));
-    buffer.write(VT100.bold());
+  if (state == State.won) {
+    buffer.write(Ansi.fgIndex(226));
+    buffer.write(Ansi.bold());
     final str = 'You won!';
     buffer.write(
-      VT100.cursorPosition(
+      Ansi.cursor(
         y: (height / 2).round(),
         x: (width / 2 - str.length / 2).round(),
       ),
     );
     buffer.write(str);
-    buffer.write(VT100.resetStyles());
+    buffer.write(Ansi.reset());
   }
 
   // draw instructions
   if (showInstructions) {
-    buffer.write(VT100.foreground(226));
+    buffer.write(Ansi.fgIndex(226));
     for (var i = 0; i < instructions.length; i++) {
-      buffer.write(VT100.cursorPosition(y: 1 + i, x: cols + 2));
+      buffer.write(Ansi.cursor(y: 1 + i, x: cols + 2));
       buffer.write(instructions[i]);
     }
   }
@@ -166,17 +166,17 @@ void draw() {
   // draw mine counter
   final flagCount = grid.expand((row) => row).where((c) => c.flagged).length;
   final minesLeft = numMines - flagCount;
-  buffer.write(VT100.foreground(9));
-  buffer.write(VT100.cursorPosition(y: rows + 2, x: 1));
+  buffer.write(Ansi.fgIndex(9));
+  buffer.write(Ansi.cursor(y: rows + 2, x: 1));
   buffer.write('Mines: $minesLeft ');
-  buffer.write(VT100.resetStyles());
+  buffer.write(Ansi.reset());
 
   terminal.write(buffer);
   buffer.clear();
 }
 
 void move(Point<int> p) {
-  if (state == .lost || state == .won) {
+  if (state == State.lost || state == State.won) {
     return;
   }
   final newPos = cursor + p;
@@ -186,7 +186,7 @@ void move(Point<int> p) {
 }
 
 void flag() {
-  if (state == .lost || state == .won) {
+  if (state == State.lost || state == State.won) {
     return;
   }
   final cell = grid[cursor.y][cursor.x];
@@ -194,21 +194,21 @@ void flag() {
 }
 
 void open() {
-  if (state == .lost || state == .won) {
+  if (state == State.lost || state == State.won) {
     return;
   }
   final cell = grid[cursor.y][cursor.x];
-  if (cell.state == .open || cell.flagged) {
+  if (cell.state == GridState.open || cell.flagged) {
     return;
   }
   if (cell.hasMine) {
-    cell.state = .open;
-    state = .lost;
+    cell.state = GridState.open;
+    state = State.lost;
     return;
   }
   openAround(cursor);
   if (checkWinCondition()) {
-    state = .won;
+    state = State.won;
   }
 }
 
@@ -219,7 +219,7 @@ bool checkWinCondition() {
   for (var y = 0; y < rows; y++) {
     for (var x = 0; x < cols; x++) {
       final cell = grid[y][x];
-      if (cell.state == .open) {
+      if (cell.state == GridState.open) {
         numOpen++;
       }
       if (cell.hasMine) {
@@ -248,7 +248,7 @@ void openAround(Point<int> p) {
   if (cell.hasMine) {
     return;
   }
-  cell.state = .open;
+  cell.state = GridState.open;
   cell.neighborMines = neighbourMines(p);
 
   if (cell.neighborMines != 0) {
@@ -261,7 +261,7 @@ void openAround(Point<int> p) {
       continue;
     }
     final neighbourCell = grid[neighbour.y][neighbour.x];
-    if (neighbourCell.state == .closed) {
+    if (neighbourCell.state == GridState.closed) {
       openAround(neighbour);
     }
   }
@@ -296,16 +296,16 @@ void input(List<int> codes) {
     case 'r':
       init();
     case 'h':
-    case '${VT100.e}[D': // left arrow
+    case Keys.arrowLeft:
       move(Point(-1, 0));
     case 'j':
-    case '${VT100.e}[B': // down arrow
+    case Keys.arrowDown:
       move(Point(0, 1));
     case 'k':
-    case '${VT100.e}[A': // up arrow
+    case Keys.arrowUp:
       move(Point(0, -1));
     case 'l':
-    case '${VT100.e}[C': // right arrow
+    case Keys.arrowRight:
       move(Point(1, 0));
     case 'f':
       flag();
@@ -324,18 +324,21 @@ void resize(ProcessSignal signal) {
 }
 
 void quit() {
-  buffer.write(VT100.cursorVisible(true));
-  buffer.write(VT100.resetStyles());
-  buffer.write(VT100.homeAndErase());
+  buffer.write(Ansi.cursorVisible(true));
+  buffer.write(Ansi.reset());
+  buffer.write(Ansi.clearScreen());
   terminal.write(buffer);
   terminal.rawMode = false;
   exit(0);
 }
 
 void init() {
-  state = .playing;
+  state = State.playing;
   cursor = Point<int>(0, 0);
-  grid = .generate(rows, (y) => .generate(cols, (x) => Cell(.closed)));
+  grid = List.generate(
+    rows,
+    (y) => List.generate(cols, (x) => Cell(GridState.closed)),
+  );
   final mines = List<Point<int>>.generate(numMines, (_) => createMine());
   for (final mine in mines) {
     grid[mine.y][mine.x].hasMine = true;
@@ -361,7 +364,7 @@ void main(List<String> args) {
   }
 
   terminal.rawMode = true;
-  buffer.write(VT100.cursorVisible(false));
+  buffer.write(Ansi.cursorVisible(false));
   init();
   draw();
   terminal.input.listen(input);

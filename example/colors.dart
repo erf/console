@@ -9,14 +9,14 @@ int rows = terminal.height;
 int cols = terminal.width;
 
 void draw() {
-  buffer.write(VT100.background(0));
-  buffer.write(VT100.homeAndErase());
+  buffer.write(Ansi.bgIndex(0));
+  buffer.write(Ansi.clearScreen());
 
   var color = 0;
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
-      buffer.write(VT100.cursorPosition(y: row + 1, x: col + 1));
-      buffer.write(VT100.background(color));
+      buffer.write(Ansi.cursor(y: row + 1, x: col + 1));
+      buffer.write(Ansi.bgIndex(color));
       buffer.write(' ');
       ++color;
       if (color >= 256) {
@@ -32,9 +32,9 @@ void input(List<int> codes) {
   final str = String.fromCharCodes(codes);
   switch (str) {
     case 'q':
-      buffer.write(VT100.cursorVisible(true));
-      buffer.write(VT100.resetStyles());
-      buffer.write(VT100.homeAndErase());
+      buffer.write(Ansi.cursorVisible(true));
+      buffer.write(Ansi.reset());
+      buffer.write(Ansi.clearScreen());
       terminal.write(buffer);
       terminal.rawMode = false;
       exit(0);
@@ -49,7 +49,7 @@ void resize(ProcessSignal event) {
 
 void main() {
   terminal.rawMode = true;
-  terminal.write(VT100.cursorVisible(false));
+  terminal.write(Ansi.cursorVisible(false));
   draw();
   terminal.input.listen(input);
   terminal.resize.listen(resize);

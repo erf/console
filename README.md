@@ -19,22 +19,24 @@ import 'package:termio/termio.dart';
 void main() {
   final terminal = Terminal();
   terminal.rawMode = true;
-  terminal.write(VT100.cursorVisible(false));
-  terminal.write(VT100.homeAndErase());
-  terminal.write(VT100.foreground(6));
-  terminal.write(VT100.bold());
+  terminal.write(Ansi.cursorVisible(false));
+  terminal.write(Ansi.homeAndErase());
+  terminal.write(Ansi.fg(Color.cyan));
+  terminal.write(Ansi.bold());
   terminal.write('Hello, Terminal! Press q to quit.');
-  terminal.write(VT100.resetStyles());
+  terminal.write(Ansi.resetStyles());
 
   // Listen for keyboard input
   terminal.input.listen((codes) {
     final str = String.fromCharCodes(codes);
     if (str == 'q') {
-      terminal.write(VT100.cursorVisible(true));
-      terminal.write(VT100.resetStyles());
-      terminal.write(VT100.homeAndErase());
+      terminal.write(Ansi.cursorVisible(true));
+      terminal.write(Ansi.resetStyles());
+      terminal.write(Ansi.homeAndErase());
       terminal.rawMode = false;
       exit(0);
+    } else if (str == Keys.arrowUp) {
+      terminal.write('\nUp arrow pressed!');
     }
   });
 
@@ -47,19 +49,50 @@ void main() {
 
 ## Features
 
-- Raw mode for unbuffered input
-- Terminal size (columns and rows)
-- Window resize events
-- Input stream
-- VT100 escape codes (cursor, colors, text styles, clear screen)
-- Arrow key constants
+- **Terminal** - Raw mode, terminal size, input stream, resize events
+- **TestTerminal** - Mock terminal for unit testing
+- **Ansi** - Escape codes for cursor, colors, text styles, and terminal modes
+- **Keys** - Constants for keyboard input (arrows, function keys, ctrl combinations)
+- **Color** - Enum for the 16 standard ANSI colors
+
+## Colors
+
+```dart
+// Standard 16 colors via enum
+Ansi.fg(Color.red)
+Ansi.bg(Color.brightCyan)
+
+// 256-color palette by index
+Ansi.fgIndex(208)  // orange
+Ansi.bgIndex(240)  // gray
+
+// 24-bit truecolor RGB
+Ansi.fgRgb(255, 128, 0)
+Ansi.bgRgb(30, 30, 30)
+```
+
+## Testing
+
+Use `TestTerminal` for unit testing without a real terminal:
+
+```dart
+final terminal = TestTerminal(width: 80, height: 24);
+
+// Simulate input
+terminal.sendInput('q');
+terminal.sendBytes([27, 91, 65]); // Up arrow
+
+// Capture output
+terminal.write(Ansi.bold());
+expect(terminal.takeOutput(), '\x1b[1m');
+```
 
 ## Examples
 
 See the `example/` folder for complete examples:
 
-- **sweep** - Minesweeper-like game
+- **sweep** - Minesweeper game
 - **snake** - Classic snake game
 - **life** - Conway's Game of Life
-- **simple** - Minimal example
-- **colors** - Color palette display
+- **simple** - Minimal centered text example
+- **colors** - 256-color palette display

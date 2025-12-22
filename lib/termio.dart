@@ -2,8 +2,15 @@
 ///
 /// This library provides:
 /// - [Terminal] - Interface for raw mode, input streams, and terminal size
-/// - [VT100] - VT100 escape codes for cursor, colors, and text styles
+/// - [TerminalBase] - Abstract base class for terminal implementations
+/// - [Ansi] - ANSI escape codes for cursor, colors, and text styles
+/// - [Keys] - Common key constants for input handling
+/// - [Color] - Standard 16 terminal colors
+/// - [CursorStyle] - Cursor style options
+///
+/// For testing, import `package:termio/testing.dart` for [TestTerminal].
 library;
 
-export 'src/terminal.dart' show Terminal;
-export 'src/vt100.dart';
+export 'src/ansi.dart';
+export 'src/keys.dart';
+export 'src/terminal.dart' show Terminal, TerminalBase;
