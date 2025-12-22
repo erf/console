@@ -32,15 +32,12 @@ void input(List<int> codes) {
   final str = String.fromCharCodes(codes);
   switch (str) {
     case 'q':
-      {
-        buffer.write(VT100.cursorVisible(true));
-        buffer.write(VT100.cursorPosition(y: 1, x: 1));
-        buffer.write(VT100.resetStyles());
-        buffer.write(VT100.homeAndErase());
-        terminal.write(buffer);
-        buffer.clear();
-        exit(0);
-      }
+      buffer.write(VT100.cursorVisible(true));
+      buffer.write(VT100.resetStyles());
+      buffer.write(VT100.homeAndErase());
+      terminal.write(buffer);
+      terminal.rawMode = false;
+      exit(0);
   }
 }
 

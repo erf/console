@@ -46,9 +46,9 @@ void onInput(List<int> codes) {
 }
 
 void quit() {
-  terminal.write(VT100.homeAndErase());
-  terminal.write(VT100.resetStyles());
   terminal.write(VT100.cursorVisible(true));
+  terminal.write(VT100.resetStyles());
+  terminal.write(VT100.homeAndErase());
   terminal.rawMode = false;
   exit(0);
 }

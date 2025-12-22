@@ -9,9 +9,9 @@ var cols = terminal.width;
 var rows = terminal.height;
 
 void quit() {
-  buffer.write(VT100.homeAndErase());
-  buffer.write(VT100.resetStyles());
   buffer.write(VT100.cursorVisible(true));
+  buffer.write(VT100.resetStyles());
+  buffer.write(VT100.homeAndErase());
   terminal.write(buffer);
   terminal.rawMode = false;
   exit(0);
