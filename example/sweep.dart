@@ -164,6 +164,14 @@ void draw() {
     }
   }
 
+  // draw mine counter
+  final flagCount = grid.expand((row) => row).where((c) => c.flagged).length;
+  final minesLeft = numMines - flagCount;
+  buffer.write(VT100.foreground(9));
+  buffer.write(VT100.cursorPosition(y: rows + 2, x: 1));
+  buffer.write('Mines: $minesLeft ');
+  buffer.write(VT100.resetStyles());
+
   terminal.write(buffer);
   buffer.clear();
 }
