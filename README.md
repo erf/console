@@ -54,6 +54,7 @@ void main() {
 - **Ansi** - Escape codes for cursor, colors, text styles, and terminal modes
 - **Keys** - Constants for keyboard input (arrows, function keys, ctrl combinations)
 - **Color** - Enum for the 16 standard ANSI colors
+- **ThemeDetector** - Detect terminal background color for automatic light/dark theme selection
 
 ## Colors
 
@@ -70,6 +71,26 @@ Ansi.bgIndex(240)  // gray
 Ansi.fgRgb(255, 128, 0)
 Ansi.bgRgb(30, 30, 30)
 ```
+
+## Theme Detection
+
+Automatically detect if the terminal has a light or dark background:
+
+```dart
+terminal.rawMode = true;
+final theme = ThemeDetector.detectSync() ?? ThemeMode.dark;
+
+if (theme == ThemeMode.light) {
+  // Use dark colors for text
+  terminal.write(Ansi.fgRgb(30, 30, 30));
+} else {
+  // Use light colors for text
+  terminal.write(Ansi.fgRgb(220, 220, 220));
+}
+```
+
+This sends an OSC 11 query to the terminal and parses the background color
+response. Returns `null` if detection fails or times out.
 
 ## Testing
 

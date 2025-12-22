@@ -14,3 +14,4 @@ library;
 export 'src/ansi.dart';
 export 'src/keys.dart';
 export 'src/terminal.dart' show Terminal, TerminalBase;
+export 'src/theme_detector.dart';
