@@ -18,23 +18,32 @@ const baseTickMs = 120;
 const minTickMs = 50;
 const speedIncrement = 3;
 const bonusIntervalSec = 10;
-const bonusDurationSec = 5;
 
-// Bonus types: (glyph, color, value)
-class BonusType {
+// Food types: (glyph, color, value, expireSec)
+class FoodType {
   final String glyph;
   final int color;
   final int value;
-  const BonusType(this.glyph, this.color, this.value);
+  final int? expireSec; // null = never expires
+  const FoodType(this.glyph, this.color, this.value, {this.expireSec});
 }
 
+const regularFood = FoodType('●', foodColor, 1);
+
 const bonusTypes = [
-  BonusType('✦', 13, 3), // magenta, 3 pts
-  BonusType('◆', 14, 5), // cyan, 5 pts
-  BonusType('★', 11, 7), // yellow, 7 pts
-  BonusType('❖', 208, 10), // orange, 10 pts
-  BonusType('✿', 196, 15), // red, 15 pts (rare)
+  FoodType('✦', 13, 3, expireSec: 15), // magenta
+  FoodType('◆', 14, 5, expireSec: 12), // cyan
+  FoodType('★', 11, 7, expireSec: 10), // yellow
+  FoodType('❖', 208, 10, expireSec: 8), // orange
+  FoodType('✿', 196, 15, expireSec: 6), // red (rare, shorter!)
 ];
+
+class FoodItem {
+  Point<int> pos;
+  final FoodType type;
+  Timer? expireTimer;
+  FoodItem(this.pos, this.type);
+}
 
 final terminal = Terminal();
 final buffer = StringBuffer();
@@ -48,7 +57,7 @@ final cols = terminal.width;
 enum State { playing, paused, gameOver, quit }
 
 List<Point<int>> snake = [];
-List<Point<int>> food = [];
+List<FoodItem> food = [];
 Point<int> dir = Point(1, 0);
 State state = State.playing;
 Random rand = Random();
@@ -56,10 +65,7 @@ int score = 0;
 int highScore = 0;
 Timer? gameTimer;
 Timer? bonusSpawnTimer;
-Timer? bonusExpireTimer;
-Point<int>? bonus;
-BonusType? currentBonus;
-String? bonusMessage;
+String? message;
 Timer? messageTimer;
 
 bool isZero(Point p) => p.x == 0 && p.y == 0;
@@ -71,12 +77,12 @@ String headChar() {
   return '^';
 }
 
-Point<int> createFood() {
+Point<int> createFoodPos() {
   while (true) {
     final x = rand.nextInt(cols - 2) + 1;
     final y = rand.nextInt(rows - 2) + 1;
     final r = Point(x, y);
-    if (!snake.contains(r)) {
+    if (!snake.contains(r) && !food.any((f) => f.pos == r)) {
       return r;
     }
   }
@@ -104,48 +110,53 @@ void update() {
     return;
   }
 
-  // check if food was eaten and create new food
-  final foodIndex = food.indexOf(head);
-  if (foodIndex != -1) {
-    snake.add(snake.last);
-    food[foodIndex] = createFood();
-    score++;
-    if (score > highScore) highScore = score;
-    showMessage('+1');
-    restartTimer(); // speed up!
-  }
-
-  // check if bonus was eaten
-  if (bonus != null && currentBonus != null && head == bonus) {
-    for (var i = 0; i < currentBonus!.value; i++) {
+  // check if food was eaten
+  final eatenIndex = food.indexWhere((f) => f.pos == head);
+  if (eatenIndex != -1) {
+    final eaten = food[eatenIndex];
+    for (var i = 0; i < eaten.type.value; i++) {
       snake.add(snake.last);
     }
-    score += currentBonus!.value;
+    score += eaten.type.value;
     if (score > highScore) highScore = score;
-    showMessage('+${currentBonus!.value} ${currentBonus!.glyph}');
-    clearBonus();
-    restartTimer();
+
+    // show message (longer for bonus)
+    final isBonus = eaten.type.expireSec != null;
+    final msg = isBonus
+        ? '+${eaten.type.value} ${eaten.type.glyph}'
+        : '+${eaten.type.value}';
+    showMessage(msg, durationMs: isBonus ? 1500 : 500);
+
+    // cancel expire timer if any
+    eaten.expireTimer?.cancel();
+
+    // replace with new regular food, or just remove if bonus
+    if (eaten.type.expireSec == null) {
+      food[eatenIndex] = FoodItem(createFoodPos(), regularFood);
+    } else {
+      food.removeAt(eatenIndex);
+    }
+
+    restartTimer(); // speed up!
   }
 }
 
 void spawnBonus() {
-  bonus = createFood();
-  currentBonus = bonusTypes[rand.nextInt(bonusTypes.length)];
-  bonusExpireTimer = Timer(Duration(seconds: bonusDurationSec), clearBonus);
+  final type = bonusTypes[rand.nextInt(bonusTypes.length)];
+  final item = FoodItem(createFoodPos(), type);
+  if (type.expireSec != null) {
+    item.expireTimer = Timer(Duration(seconds: type.expireSec!), () {
+      food.remove(item);
+    });
+  }
+  food.add(item);
 }
 
-void clearBonus() {
-  bonus = null;
-  currentBonus = null;
-  bonusExpireTimer?.cancel();
-  bonusExpireTimer = null;
-}
-
-void showMessage(String msg) {
-  bonusMessage = msg;
+void showMessage(String msg, {int durationMs = 500}) {
+  message = msg;
   messageTimer?.cancel();
-  messageTimer = Timer(Duration(milliseconds: 500), () {
-    bonusMessage = null;
+  messageTimer = Timer(Duration(milliseconds: durationMs), () {
+    message = null;
   });
 }
 
@@ -179,20 +190,17 @@ void draw() {
   buffer.write(VT100.background(bgColor));
 
   // draw food
-  buffer.write(VT100.foreground(foodColor));
   for (var f in food) {
-    buffer.write(VT100.cursorPosition(y: f.y + 1, x: f.x + 1));
-    buffer.write('●');
-  }
-
-  // draw bonus
-  if (bonus != null && currentBonus != null) {
-    buffer.write(VT100.foreground(currentBonus!.color));
-    buffer.write(VT100.bold());
-    buffer.write(VT100.cursorPosition(y: bonus!.y + 1, x: bonus!.x + 1));
-    buffer.write(currentBonus!.glyph);
-    buffer.write(VT100.resetStyles());
-    buffer.write(VT100.background(bgColor));
+    if (f.type.expireSec != null) {
+      buffer.write(VT100.bold());
+    }
+    buffer.write(VT100.foreground(f.type.color));
+    buffer.write(VT100.cursorPosition(y: f.pos.y + 1, x: f.pos.x + 1));
+    buffer.write(f.type.glyph);
+    if (f.type.expireSec != null) {
+      buffer.write(VT100.resetStyles());
+      buffer.write(VT100.background(bgColor));
+    }
   }
 
   // draw snake body
@@ -242,18 +250,19 @@ void draw() {
     buffer.write(VT100.resetStyles());
   }
 
-  // draw bonus message
-  if (bonusMessage != null) {
+  // draw message
+  if (message != null) {
     buffer.write(VT100.foreground(textColor));
     buffer.write(VT100.bold());
     buffer.write(
       VT100.cursorPosition(
         y: (height / 2 - 2).round(),
-        x: (width / 2 - bonusMessage!.length / 2).round(),
+        x: (width / 2 - message!.length / 2).round(),
       ),
     );
-    buffer.write(bonusMessage!);
+    buffer.write(message!);
     buffer.write(VT100.resetStyles());
+    buffer.write(VT100.background(bgColor));
   }
 
   // draw score
@@ -277,7 +286,9 @@ void quit() {
   state = State.quit;
   gameTimer?.cancel();
   bonusSpawnTimer?.cancel();
-  bonusExpireTimer?.cancel();
+  for (var f in food) {
+    f.expireTimer?.cancel();
+  }
   buffer.write(VT100.cursorVisible(true));
   buffer.write(VT100.resetStyles());
   buffer.write(VT100.homeAndErase());
@@ -361,12 +372,19 @@ void init() {
   score = 0;
   snake = [Point((cols / 2).round(), (rows / 2).round())];
   dir = Point(1, 0);
+  // cancel existing food timers
+  for (var f in food) {
+    f.expireTimer?.cancel();
+  }
   final numFood = max((sqrt(cols * rows) / 2.0).round(), 1);
-  food = List<Point<int>>.generate(numFood, (_) => createFood());
-  clearBonus();
+  food = List<FoodItem>.generate(
+    numFood,
+    (_) => FoodItem(createFoodPos(), regularFood),
+  );
   bonusSpawnTimer?.cancel();
   bonusSpawnTimer = Timer.periodic(Duration(seconds: bonusIntervalSec), (_) {
-    if (state == State.playing && bonus == null) spawnBonus();
+    final hasBonus = food.any((f) => f.type.expireSec != null);
+    if (state == State.playing && !hasBonus) spawnBonus();
   });
   restartTimer();
 }
