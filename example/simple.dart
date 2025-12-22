@@ -21,21 +21,34 @@ void draw() {
   buffer.write(VT100.homeAndErase());
   buffer.write(VT100.foreground(6));
   final title = 'Hello';
+  final subtitle = 'Welcome to the terminal';
   final instructions = 'Press \'q\' to quit';
   buffer.write(
     VT100.cursorPosition(
-      y: (rows / 2).round() - 1,
+      y: (rows / 2).round() - 2,
       x: (cols / 2).round() - (title.length / 2).round(),
     ),
   );
+  buffer.write(VT100.bold());
   buffer.write(title);
+  buffer.write(VT100.resetStyles());
+  buffer.write(VT100.foreground(6));
   buffer.write(
     VT100.cursorPosition(
-      y: (rows / 2).round() + 1,
+      y: (rows / 2).round(),
+      x: (cols / 2).round() - (subtitle.length / 2).round(),
+    ),
+  );
+  buffer.write(subtitle);
+  buffer.write(
+    VT100.cursorPosition(
+      y: (rows / 2).round() + 2,
       x: (cols / 2).round() - (instructions.length / 2).round(),
     ),
   );
+  buffer.write(VT100.underline());
   buffer.write(instructions);
+  buffer.write(VT100.resetStyles());
   final sizeInfo = 'rows $rows cols $cols';
   buffer.write(VT100.cursorPosition(y: rows + 1, x: cols - sizeInfo.length));
   buffer.write(sizeInfo);
