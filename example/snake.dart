@@ -34,9 +34,17 @@ List<Point<int>> food = [];
 Point<int> dir = Point(1, 0);
 State state = State.playing;
 Random rand = Random();
+int score = 0;
+int highScore = 0;
+Timer? gameTimer;
 
-bool isZero(Point p) {
-  return p.x == 0 && p.y == 0;
+bool isZero(Point p) => p.x == 0 && p.y == 0;
+
+String headChar() {
+  if (dir.x == 1) return '>';
+  if (dir.x == -1) return '<';
+  if (dir.y == 1) return 'v';
+  return '^';
 }
 
 Point<int> createFood() {
@@ -75,16 +83,23 @@ void update() {
   // check if food was eaten and create new food
   final foodIndex = food.indexOf(head);
   if (foodIndex != -1) {
-    // more snake
     snake.add(snake.last);
-
-    // add new food
     food[foodIndex] = createFood();
+    score++;
+    if (score > highScore) highScore = score;
+    restartTimer(); // speed up!
   }
 }
 
+int tickSpeed() => max(minTickMs, baseTickMs - (score * speedIncrement));
+
+void restartTimer() {
+  gameTimer?.cancel();
+  gameTimer = Timer.periodic(Duration(milliseconds: tickSpeed()), tick);
+}
+
 void draw() {
-  buffer.write(VT100.background(0));
+  buffer.write(VT100.background(bgColor));
   buffer.write(VT100.homeAndErase());
 
   // draw wall
@@ -209,7 +224,12 @@ void input(List<int> codes) {
   }
 }
 
-void tick(Timer timer) {
+void tick(Timer _) {
+  if (state == State.gameOver) {
+    gameTimer?.cancel();
+    draw();
+    return;
+  }
   if (state != State.playing) {
     return;
   }
@@ -219,16 +239,17 @@ void tick(Timer timer) {
 
 void init() {
   state = State.playing;
+  score = 0;
   snake = [Point((cols / 2).round(), (rows / 2).round())];
   dir = Point(1, 0);
   final numFood = max((sqrt(cols * rows) / 2.0).round(), 1);
   food = List<Point<int>>.generate(numFood, (_) => createFood());
+  restartTimer();
 }
 
 void main() {
   terminal.rawMode = true;
   buffer.write(VT100.cursorVisible(false));
   init();
-  Timer.periodic(Duration(milliseconds: 100), tick);
   terminal.input.listen(input);
 }
