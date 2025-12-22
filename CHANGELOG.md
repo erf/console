@@ -1,3 +1,6 @@
+## 0.3.0+1
+- improve README
+
 ## 0.3.0
 - add terminal interrupt stream 
 
