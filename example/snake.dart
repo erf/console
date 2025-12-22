@@ -17,6 +17,24 @@ const bgColor = 0;
 const baseTickMs = 120;
 const minTickMs = 50;
 const speedIncrement = 3;
+const bonusIntervalSec = 10;
+const bonusDurationSec = 5;
+
+// Bonus types: (glyph, color, value)
+class BonusType {
+  final String glyph;
+  final int color;
+  final int value;
+  const BonusType(this.glyph, this.color, this.value);
+}
+
+const bonusTypes = [
+  BonusType('✦', 13, 3), // magenta, 3 pts
+  BonusType('◆', 14, 5), // cyan, 5 pts
+  BonusType('★', 11, 7), // yellow, 7 pts
+  BonusType('❖', 208, 10), // orange, 10 pts
+  BonusType('✿', 196, 15), // red, 15 pts (rare)
+];
 
 final terminal = Terminal();
 final buffer = StringBuffer();
@@ -37,6 +55,12 @@ Random rand = Random();
 int score = 0;
 int highScore = 0;
 Timer? gameTimer;
+Timer? bonusSpawnTimer;
+Timer? bonusExpireTimer;
+Point<int>? bonus;
+BonusType? currentBonus;
+String? bonusMessage;
+Timer? messageTimer;
 
 bool isZero(Point p) => p.x == 0 && p.y == 0;
 
@@ -89,6 +113,39 @@ void update() {
     if (score > highScore) highScore = score;
     restartTimer(); // speed up!
   }
+
+  // check if bonus was eaten
+  if (bonus != null && currentBonus != null && head == bonus) {
+    for (var i = 0; i < currentBonus!.value; i++) {
+      snake.add(snake.last);
+    }
+    score += currentBonus!.value;
+    if (score > highScore) highScore = score;
+    showBonusMessage('+${currentBonus!.value} ${currentBonus!.glyph}');
+    clearBonus();
+    restartTimer();
+  }
+}
+
+void spawnBonus() {
+  bonus = createFood();
+  currentBonus = bonusTypes[rand.nextInt(bonusTypes.length)];
+  bonusExpireTimer = Timer(Duration(seconds: bonusDurationSec), clearBonus);
+}
+
+void clearBonus() {
+  bonus = null;
+  currentBonus = null;
+  bonusExpireTimer?.cancel();
+  bonusExpireTimer = null;
+}
+
+void showBonusMessage(String msg) {
+  bonusMessage = msg;
+  messageTimer?.cancel();
+  messageTimer = Timer(Duration(seconds: 2), () {
+    bonusMessage = null;
+  });
 }
 
 int tickSpeed() => max(minTickMs, baseTickMs - (score * speedIncrement));
@@ -125,6 +182,16 @@ void draw() {
   for (var f in food) {
     buffer.write(VT100.cursorPosition(y: f.y + 1, x: f.x + 1));
     buffer.write('●');
+  }
+
+  // draw bonus
+  if (bonus != null && currentBonus != null) {
+    buffer.write(VT100.foreground(currentBonus!.color));
+    buffer.write(VT100.bold());
+    buffer.write(VT100.cursorPosition(y: bonus!.y + 1, x: bonus!.x + 1));
+    buffer.write(currentBonus!.glyph);
+    buffer.write(VT100.resetStyles());
+    buffer.write(VT100.background(bgColor));
   }
 
   // draw snake body
@@ -174,6 +241,20 @@ void draw() {
     buffer.write(VT100.resetStyles());
   }
 
+  // draw bonus message
+  if (bonusMessage != null) {
+    buffer.write(VT100.foreground(textColor));
+    buffer.write(VT100.bold());
+    buffer.write(
+      VT100.cursorPosition(
+        y: (height / 2 - 2).round(),
+        x: (width / 2 - bonusMessage!.length / 2).round(),
+      ),
+    );
+    buffer.write(bonusMessage!);
+    buffer.write(VT100.resetStyles());
+  }
+
   // draw score
   buffer.write(VT100.foreground(textColor));
 
@@ -194,6 +275,8 @@ void draw() {
 void quit() {
   state = State.quit;
   gameTimer?.cancel();
+  bonusSpawnTimer?.cancel();
+  bonusExpireTimer?.cancel();
   buffer.write(VT100.cursorVisible(true));
   buffer.write(VT100.resetStyles());
   buffer.write(VT100.homeAndErase());
@@ -279,6 +362,11 @@ void init() {
   dir = Point(1, 0);
   final numFood = max((sqrt(cols * rows) / 2.0).round(), 1);
   food = List<Point<int>>.generate(numFood, (_) => createFood());
+  clearBonus();
+  bonusSpawnTimer?.cancel();
+  bonusSpawnTimer = Timer.periodic(Duration(seconds: bonusIntervalSec), (_) {
+    if (state == State.playing && bonus == null) spawnBonus();
+  });
   restartTimer();
 }
 
