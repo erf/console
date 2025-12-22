@@ -116,7 +116,19 @@ void draw() {
 
   // draw game lost
   if (state == .lost) {
+    // reveal all mines
+    for (var row = 0; row < rows; row++) {
+      for (var col = 0; col < cols; col++) {
+        final cell = grid[row][col];
+        if (cell.hasMine && !cell.flagged) {
+          buffer.write(VT100.cursorPosition(y: row + 1, x: col + 1));
+          buffer.write(VT100.foreground(9));
+          buffer.write('*');
+        }
+      }
+    }
     buffer.write(VT100.foreground(226));
+    buffer.write(VT100.bold());
     final str = 'Game Over';
     buffer.write(
       VT100.cursorPosition(
