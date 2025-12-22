@@ -123,7 +123,7 @@ void draw() {
   buffer.write(VT100.foreground(226));
 
   final instructions = [
-    'hjkl - move',
+    'hjkl/arrows - move',
     'p    - pause',
     'r    - restart',
     'q    - quit',
@@ -167,6 +167,7 @@ void input(List<int> codes) {
       break;
 
     case 'h':
+    case '${VT100.e}[D': // left arrow
       final d = Point(-1, 0);
       if (!isZero(dir + d)) {
         dir = d;
@@ -174,6 +175,7 @@ void input(List<int> codes) {
       break;
 
     case 'j':
+    case '${VT100.e}[B': // down arrow
       final d = Point(0, 1);
       if (!isZero(dir + d)) {
         dir = d;
@@ -181,6 +183,7 @@ void input(List<int> codes) {
       break;
 
     case 'k':
+    case '${VT100.e}[A': // up arrow
       final d = Point(0, -1);
       if (!isZero(dir + d)) {
         dir = d;
@@ -188,6 +191,7 @@ void input(List<int> codes) {
       break;
 
     case 'l':
+    case '${VT100.e}[C': // right arrow
       final d = Point(1, 0);
       if (!isZero(dir + d)) {
         dir = d;
@@ -209,7 +213,7 @@ void init() {
   snake = [Point((cols / 2).round(), (rows / 2).round())];
   dir = Point(1, 0);
   final numFood = max((sqrt(cols * rows) / 2.0).round(), 1);
-  food = List<Point<int>>.generate(numFood, genFood);
+  food = List<Point<int>>.generate(numFood, (_) => createFood());
 }
 
 void main() {

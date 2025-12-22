@@ -19,15 +19,13 @@ class Cell {
 State state = .playing;
 
 final instructions = [
-  'hjkl - move',
+  'hjkl/arrows - move',
   'f - flag/unflag',
-  'o - open cell',
+  'o/space - open cell',
   'r - restart',
   'i - instructions',
   'q - quit',
 ];
-
-String info = '';
 
 bool showInstructions = true;
 
@@ -152,7 +150,7 @@ void draw() {
 }
 
 void move(Point<int> p) {
-  if (state == State.lost || state == State.won) {
+  if (state == .lost || state == .won) {
     return;
   }
   final newPos = cursor + p;
@@ -174,12 +172,12 @@ void open() {
     return;
   }
   final cell = grid[cursor.y][cursor.x];
-  if (cell.state == GridState.open) {
+  if (cell.state == .open) {
     return;
   }
-  cell.state = GridState.open;
+  cell.state = .open;
   if (cell.hasMine) {
-    state = State.lost;
+    state = .lost;
   } else {
     openAround(cursor);
   }
@@ -272,16 +270,21 @@ void input(List<int> codes) {
     case 'r':
       init();
     case 'h':
+    case '${VT100.e}[D': // left arrow
       move(Point(-1, 0));
     case 'j':
+    case '${VT100.e}[B': // down arrow
       move(Point(0, 1));
     case 'k':
+    case '${VT100.e}[A': // up arrow
       move(Point(0, -1));
     case 'l':
+    case '${VT100.e}[C': // right arrow
       move(Point(1, 0));
     case 'f':
       flag();
     case 'o':
+    case ' ': // space
       open();
   }
 
@@ -307,11 +310,10 @@ void init() {
   state = .playing;
   cursor = Point<int>(0, 0);
   grid = .generate(rows, (y) => .generate(cols, (x) => Cell(.closed)));
-  final mines = List<Point<int>>.generate(numMines, genMine);
+  final mines = List<Point<int>>.generate(numMines, (_) => createMine());
   for (final mine in mines) {
     grid[mine.y][mine.x].hasMine = true;
   }
-  draw();
 }
 
 void main() {
