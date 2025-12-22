@@ -339,8 +339,9 @@ void init() {
     rows,
     (y) => List.generate(cols, (x) => Cell(GridState.closed)),
   );
-  final mines = List<Point<int>>.generate(numMines, (_) => createMine());
-  for (final mine in mines) {
+  // Place mines one at a time so duplicate check works correctly
+  for (var i = 0; i < numMines; i++) {
+    final mine = createMine();
     grid[mine.y][mine.x].hasMine = true;
   }
 }
