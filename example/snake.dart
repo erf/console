@@ -5,19 +5,23 @@ import 'dart:math';
 import 'package:termio/termio.dart';
 
 // Colors
-const wallColor = 238;
-const wallFg = 7;
-const foodColor = 9;
-const snakeHeadColor = 10;
-const snakeBodyColor = 2;
-const textColor = 226;
-const bgColor = 0;
+class Colors {
+  static const wall = 238;
+  static const wallFg = 7;
+  static const food = 9;
+  static const snakeHead = 10;
+  static const snakeBody = 2;
+  static const text = 226;
+  static const bg = 0;
+}
 
 // Timing
-const baseTickMs = 120;
-const minTickMs = 50;
-const speedIncrement = 3;
-const bonusIntervalSec = 10;
+class Timings {
+  static const baseTickMs = 120;
+  static const minTickMs = 50;
+  static const speedIncrement = 3;
+  static const bonusIntervalSec = 10;
+}
 
 // Food types: (glyph, color, value, expireSec)
 class FoodType {
@@ -28,7 +32,7 @@ class FoodType {
   const FoodType(this.glyph, this.color, this.value, {this.expireSec});
 }
 
-const regularFood = FoodType('●', foodColor, 1);
+const regularFood = FoodType('●', 9, 1); // GameColor.food.code
 
 const bonusTypes = [
   FoodType('✦', 13, 3, expireSec: 15), // magenta
@@ -160,7 +164,10 @@ void showMessage(String msg, {int durationMs = 500}) {
   });
 }
 
-int tickSpeed() => max(minTickMs, baseTickMs - (score * speedIncrement));
+int tickSpeed() => max(
+  Timings.minTickMs,
+  Timings.baseTickMs - (score * Timings.speedIncrement),
+);
 
 void restartTimer() {
   gameTimer?.cancel();
@@ -168,18 +175,18 @@ void restartTimer() {
 }
 
 void draw() {
-  buffer.write(VT100.background(bgColor));
+  buffer.write(VT100.background(Colors.bg));
   buffer.write(VT100.homeAndErase());
 
   // draw wall and floor
   for (var row = 0; row < rows; row++) {
     for (var col = 0; col < cols; col++) {
       if (row == 0 || col == 0 || row == rows - 1 || col == cols - 1) {
-        buffer.write(VT100.foreground(wallFg));
-        buffer.write(VT100.background(wallColor));
+        buffer.write(VT100.foreground(Colors.wallFg));
+        buffer.write(VT100.background(Colors.wall));
         buffer.write('#');
       } else {
-        buffer.write(VT100.background(bgColor));
+        buffer.write(VT100.background(Colors.bg));
         buffer.write(' ');
       }
     }
@@ -187,7 +194,7 @@ void draw() {
   }
 
   // reset background for game elements
-  buffer.write(VT100.background(bgColor));
+  buffer.write(VT100.background(Colors.bg));
 
   // draw food
   for (var f in food) {
@@ -199,12 +206,12 @@ void draw() {
     buffer.write(f.type.glyph);
     if (f.type.expireSec != null) {
       buffer.write(VT100.resetStyles());
-      buffer.write(VT100.background(bgColor));
+      buffer.write(VT100.background(Colors.bg));
     }
   }
 
   // draw snake body
-  buffer.write(VT100.foreground(snakeBodyColor));
+  buffer.write(VT100.foreground(Colors.snakeBody));
   for (var i = 1; i < snake.length; i++) {
     final p = snake[i];
     buffer.write(VT100.cursorPosition(y: p.y + 1, x: p.x + 1));
@@ -213,7 +220,7 @@ void draw() {
 
   // draw snake head
   if (snake.isNotEmpty) {
-    buffer.write(VT100.foreground(snakeHeadColor));
+    buffer.write(VT100.foreground(Colors.snakeHead));
     buffer.write(
       VT100.cursorPosition(y: snake.first.y + 1, x: snake.first.x + 1),
     );
@@ -222,7 +229,7 @@ void draw() {
 
   // draw game over
   if (state == State.gameOver) {
-    buffer.write(VT100.foreground(textColor));
+    buffer.write(VT100.foreground(Colors.text));
     buffer.write(VT100.bold());
     final str = ' GAME OVER ';
     buffer.write(
@@ -237,7 +244,7 @@ void draw() {
 
   // draw paused
   if (state == State.paused) {
-    buffer.write(VT100.foreground(textColor));
+    buffer.write(VT100.foreground(Colors.text));
     buffer.write(VT100.bold());
     final str = ' PAUSED ';
     buffer.write(
@@ -252,7 +259,7 @@ void draw() {
 
   // draw message
   if (message != null) {
-    buffer.write(VT100.foreground(textColor));
+    buffer.write(VT100.foreground(Colors.text));
     buffer.write(VT100.bold());
     buffer.write(
       VT100.cursorPosition(
@@ -262,11 +269,11 @@ void draw() {
     );
     buffer.write(message!);
     buffer.write(VT100.resetStyles());
-    buffer.write(VT100.background(bgColor));
+    buffer.write(VT100.background(Colors.bg));
   }
 
   // draw score
-  buffer.write(VT100.foreground(textColor));
+  buffer.write(VT100.foreground(Colors.text));
 
   buffer.write(VT100.cursorPosition(y: rows + 1, x: 1));
   buffer.write('Score: $score  High: $highScore  Speed: ${tickSpeed()}ms');
@@ -382,10 +389,13 @@ void init() {
     (_) => FoodItem(createFoodPos(), regularFood),
   );
   bonusSpawnTimer?.cancel();
-  bonusSpawnTimer = Timer.periodic(Duration(seconds: bonusIntervalSec), (_) {
-    final hasBonus = food.any((f) => f.type.expireSec != null);
-    if (state == State.playing && !hasBonus) spawnBonus();
-  });
+  bonusSpawnTimer = Timer.periodic(
+    Duration(seconds: Timings.bonusIntervalSec),
+    (_) {
+      final hasBonus = food.any((f) => f.type.expireSec != null);
+      if (state == State.playing && !hasBonus) spawnBonus();
+    },
+  );
   restartTimer();
 }
 
