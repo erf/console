@@ -137,11 +137,13 @@ void draw() {
       ),
     );
     buffer.write(str);
+    buffer.write(VT100.resetStyles());
   }
 
   // draw game won
   if (state == .won) {
     buffer.write(VT100.foreground(226));
+    buffer.write(VT100.bold());
     final str = 'You won!';
     buffer.write(
       VT100.cursorPosition(
@@ -150,6 +152,7 @@ void draw() {
       ),
     );
     buffer.write(str);
+    buffer.write(VT100.resetStyles());
   }
 
   // draw instructions
