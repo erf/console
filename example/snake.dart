@@ -36,10 +36,6 @@ Point<int> createFood() {
   }
 }
 
-Point<int> genFood(int index) {
-  return createFood();
-}
-
 void update() {
   // update snake tail
   for (var i = snake.length - 1; i > 0; i--) {

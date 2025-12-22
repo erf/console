@@ -69,10 +69,6 @@ Point<int> createMine() {
   }
 }
 
-Point<int> genMine(int index) {
-  return createMine();
-}
-
 void draw() {
   buffer.write(VT100.background(0));
   buffer.write(VT100.homeAndErase());
@@ -151,20 +147,12 @@ void draw() {
     }
   }
 
-  // test show win condition or some other info
-  if (info.isNotEmpty) {
-    buffer.write(
-      VT100.cursorPosition(y: 1 + instructions.length + 1, x: cols + 2),
-    );
-    buffer.write(info);
-  }
-
   terminal.write(buffer);
   buffer.clear();
 }
 
 void move(Point<int> p) {
-  if (state == .lost || state == .won) {
+  if (state == State.lost || state == State.won) {
     return;
   }
   final newPos = cursor + p;
