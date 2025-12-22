@@ -28,12 +28,16 @@ class TestTerminal extends TerminalBase {
 
   final _inputController = StreamController<List<int>>.broadcast();
   final _resizeController = StreamController<ProcessSignal>.broadcast();
+  final _interruptController = StreamController<ProcessSignal>.broadcast();
 
   @override
   Stream<List<int>> get input => _inputController.stream;
 
   @override
   Stream<ProcessSignal> get resize => _resizeController.stream;
+
+  @override
+  Stream<ProcessSignal> get interrupt => _interruptController.stream;
 
   /// Buffer containing all written output.
   final output = StringBuffer();
@@ -63,6 +67,11 @@ class TestTerminal extends TerminalBase {
     _resizeController.add(ProcessSignal.sigwinch);
   }
 
+  /// Simulate an interrupt (Ctrl+C) event.
+  void sendInterrupt() {
+    _interruptController.add(ProcessSignal.sigint);
+  }
+
   /// Clear the output buffer.
   void clearOutput() {
     output.clear();
@@ -79,5 +88,6 @@ class TestTerminal extends TerminalBase {
   Future<void> dispose() async {
     await _inputController.close();
     await _resizeController.close();
+    await _interruptController.close();
   }
 }

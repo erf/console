@@ -25,6 +25,9 @@ abstract class TerminalBase {
   /// Stream of terminal resize events.
   Stream<ProcessSignal> get resize;
 
+  /// Stream of interrupt (Ctrl+C) events.
+  Stream<ProcessSignal> get interrupt;
+
   /// Write to the terminal output.
   void write(Object? object);
 }
@@ -57,6 +60,9 @@ class Terminal extends TerminalBase {
 
   @override
   Stream<ProcessSignal> get resize => ProcessSignal.sigwinch.watch();
+
+  @override
+  Stream<ProcessSignal> get interrupt => ProcessSignal.sigint.watch();
 
   @override
   void write(Object? str) => stdout.write(str);
