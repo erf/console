@@ -20,19 +20,19 @@ void main() {
   final terminal = Terminal();
   terminal.rawMode = true;
   terminal.write(Ansi.cursorVisible(false));
-  terminal.write(Ansi.homeAndErase());
+  terminal.write(Ansi.clearScreen());
   terminal.write(Ansi.fg(Color.cyan));
   terminal.write(Ansi.bold());
   terminal.write('Hello, Terminal! Press q to quit.');
-  terminal.write(Ansi.resetStyles());
+  terminal.write(Ansi.reset());
 
   // Listen for keyboard input
   terminal.input.listen((codes) {
     final str = String.fromCharCodes(codes);
     if (str == 'q') {
       terminal.write(Ansi.cursorVisible(true));
-      terminal.write(Ansi.resetStyles());
-      terminal.write(Ansi.homeAndErase());
+      terminal.write(Ansi.reset());
+      terminal.write(Ansi.clearScreen());
       terminal.rawMode = false;
       exit(0);
     } else if (str == Keys.arrowUp) {
