@@ -1,7 +1,13 @@
 name: termio
-description: minimal lib for interactive console apps
+description: A minimal library for building interactive terminal applications with VT100 escape codes support.
 version: 0.1.0
-homepage: https://github.com/erf/termio
+repository: https://github.com/erf/termio
+issue_tracker: https://github.com/erf/termio/issues
+topics:
+  - terminal
+  - console
+  - cli
+  - vt100
 
 environment:
   sdk: ^3.10.0

@@ -1,30 +1,36 @@
 import 'dart:io';
 
-/// A terminal interface for reading input and writing output
+/// A terminal interface for reading input and writing output.
+///
+/// Provides access to raw mode, terminal dimensions, input streams,
+/// and resize events.
 class Terminal {
-  /// Set raw mode for terminal input
-  set rawMode(bool rawMode) {
-    if (rawMode) {
-      stdin.echoMode = false;
-      stdin.lineMode = false;
-    } else {
-      stdin.echoMode = true;
-      stdin.lineMode = true;
-    }
+  bool _rawMode = false;
+
+  /// Get the current raw mode state.
+  bool get rawMode => _rawMode;
+
+  /// Set raw mode for terminal input.
+  ///
+  /// When enabled, input is unbuffered and echo is disabled.
+  set rawMode(bool value) {
+    _rawMode = value;
+    stdin.echoMode = !value;
+    stdin.lineMode = !value;
   }
 
-  /// Get width of terminal
+  /// Get width of terminal in columns.
   int get width => stdout.terminalColumns;
 
-  /// Get height of terminal
+  /// Get height of terminal in rows.
   int get height => stdout.terminalLines;
 
-  /// Watch for terminal input
-  Stream<List<int>> get input => stdin.asBroadcastStream();
+  /// Broadcast stream of terminal input.
+  late final Stream<List<int>> input = stdin.asBroadcastStream();
 
-  /// Watch for terminal resize events
+  /// Stream of terminal resize events.
   Stream<ProcessSignal> get resize => ProcessSignal.sigwinch.watch();
 
-  /// Write to stdout
+  /// Write to stdout.
   void write(Object? str) => stdout.write(str);
 }

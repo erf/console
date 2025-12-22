@@ -1,24 +1,36 @@
-/// VT100 escape codes
+/// VT100 escape codes for terminal control.
+///
+/// All methods return escape code strings that can be written to the terminal.
 class VT100 {
   VT100._();
 
-  /// move cursor to position (x,y)
+  /// Escape character.
+  static const e = '\x1b';
+
+  /// Move cursor to position (x, y).
+  ///
+  /// Coordinates are 1-based (top-left is 1,1).
   static String cursorPosition({required int x, required int y}) =>
-      '\x1b[$y;${x}H';
+      '$e[$y;${x}H';
 
-  /// cursor visibility
-  static String cursorVisible(bool visible) =>
-      visible ? '\x1b[?25h' : '\x1b[?25l';
+  /// Show or hide the cursor.
+  static String cursorVisible(bool visible) => visible ? '$e[?25h' : '$e[?25l';
 
-  /// home and erase down
-  static String homeAndErase() => '\x1b[H\x1b[J';
+  /// Move cursor home and erase screen.
+  static String homeAndErase() => '$e[H$e[J';
 
-  /// set foreground color
-  static String foreground(int color) => '\x1b[38;5;${color}m';
+  /// Set foreground color using 256-color palette.
+  static String foreground(int color) => '$e[38;5;${color}m';
 
-  /// set background color
-  static String background(int color) => '\x1b[48;5;${color}m';
+  /// Set background color using 256-color palette.
+  static String background(int color) => '$e[48;5;${color}m';
 
-  /// reset font and background color
-  static String resetStyles() => '\x1b[0m';
+  /// Enable bold text.
+  static String bold() => '$e[1m';
+
+  /// Enable underlined text.
+  static String underline() => '$e[4m';
+
+  /// Reset all text styles and colors.
+  static String resetStyles() => '$e[0m';
 }
