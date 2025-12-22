@@ -4,6 +4,20 @@ import 'dart:math';
 
 import 'package:termio/termio.dart';
 
+// Colors
+const wallColor = 238;
+const wallFg = 7;
+const foodColor = 9;
+const snakeHeadColor = 10;
+const snakeBodyColor = 2;
+const textColor = 226;
+const bgColor = 0;
+
+// Timing
+const baseTickMs = 120;
+const minTickMs = 50;
+const speedIncrement = 3;
+
 final terminal = Terminal();
 final buffer = StringBuffer();
 
