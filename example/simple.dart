@@ -20,25 +20,25 @@ void quit() {
 void draw() {
   buffer.write(VT100.homeAndErase());
   buffer.write(VT100.foreground(6));
-  final str0 = 'Hello';
-  final str1 = 'Press \'q\' to quit';
+  final title = 'Hello';
+  final instructions = 'Press \'q\' to quit';
   buffer.write(
     VT100.cursorPosition(
       y: (rows / 2).round() - 1,
-      x: (cols / 2).round() - (str0.length / 2).round(),
+      x: (cols / 2).round() - (title.length / 2).round(),
     ),
   );
-  buffer.write(str0);
+  buffer.write(title);
   buffer.write(
     VT100.cursorPosition(
       y: (rows / 2).round() + 1,
-      x: (cols / 2).round() - (str1.length / 2).round(),
+      x: (cols / 2).round() - (instructions.length / 2).round(),
     ),
   );
-  buffer.write(str1);
-  final str = 'rows $rows cols $cols';
-  buffer.write(VT100.cursorPosition(y: rows + 1, x: cols - str.length));
-  buffer.write(str);
+  buffer.write(instructions);
+  final sizeInfo = 'rows $rows cols $cols';
+  buffer.write(VT100.cursorPosition(y: rows + 1, x: cols - sizeInfo.length));
+  buffer.write(sizeInfo);
   terminal.write(buffer);
   buffer.clear();
 }
