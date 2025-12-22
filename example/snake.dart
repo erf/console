@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:console/console.dart';
+import 'package:termio/termio.dart';
 
 final terminal = Terminal();
 final buffer = StringBuffer();

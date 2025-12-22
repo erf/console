@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:console/console.dart';
+import 'package:termio/termio.dart';
 
 final terminal = Terminal();
 final buffer = StringBuffer();

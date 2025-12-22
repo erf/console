@@ -1,7 +1,7 @@
-name: console
+name: termio
 description: minimal lib for interactive console apps
 version: 0.1.0
-homepage: https://github.com/erf/console
+homepage: https://github.com/erf/termio
 
 environment:
   sdk: ^3.10.0

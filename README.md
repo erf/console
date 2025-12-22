@@ -1,4 +1,6 @@
-# A minimal lib for console apps in Dart
+# termio
+
+A minimal lib for console apps in Dart.
 
 No dependencies. Just pure Dart.
 

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:console/console.dart';
+import 'package:termio/termio.dart';
 
 enum State { playing, lost, won }
 

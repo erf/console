@@ -1,8 +1,8 @@
-import 'package:console/console.dart';
+import 'package:termio/termio.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('console tests', () {
+  group('termio tests', () {
     setUp(() {});
 
     test('cursorPosition', () {
