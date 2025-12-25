@@ -58,8 +58,9 @@ void drawFooter() {
   buffer.write(Ansi.cursor(x: 1, y: rows));
   buffer.write(Ansi.bgIndex(236));
   buffer.write(Ansi.fgIndex(7));
-  final nav =
-      ' [←/→] Navigate  [q] Quit  Demo ${currentDemo + 1}/${demos.length} ';
+  final nav = currentDemo == 5
+      ? ' [←/→] Navigate  [hjkl] Move *  [N+hjkl] Move N  [q] Quit  Demo ${currentDemo + 1}/${demos.length} '
+      : ' [←/→] Navigate  [q] Quit  Demo ${currentDemo + 1}/${demos.length} ';
   buffer.write(nav.padRight(cols));
   buffer.write(Ansi.reset());
 }
@@ -346,69 +347,91 @@ void demoCursorStyles() {
 
 bool cursorIsVisible = true;
 
+// Cursor movement demo state
+int starX = 7;
+int starY = 2;
+const int boxWidth = 14;
+const int boxHeight = 3;
+int moveCount = 0; // For vim-style count prefix (e.g., "5j")
+
 void demoCursorMovement() {
   var y = 4;
   buffer.write(Ansi.cursor(x: 3, y: y));
   buffer.write(Ansi.fgIndex(15));
-  buffer.write('Cursor Movement:');
+  buffer.write('Cursor Movement - Use hjkl (vim-style) to move the *');
   buffer.write(Ansi.reset());
   y += 2;
 
   buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('cursor(x: N, y: N) - Move to absolute position');
+  buffer.write('cursor(x, y)    - Absolute position');
   y += 1;
 
   buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('cursorUp(N)        - Move up N lines');
+  buffer.write('cursorUp(N)     - Move up N lines');
   y += 1;
 
   buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('cursorDown(N)      - Move down N lines');
+  buffer.write('cursorDown(N)   - Move down N lines');
   y += 1;
 
   buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('cursorLeft(N)      - Move left N columns');
+  buffer.write('cursorLeft(N)   - Move left N columns');
   y += 1;
 
   buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('cursorRight(N)     - Move right N columns');
+  buffer.write('cursorRight(N)  - Move right N columns');
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('cursorSave()    - Save position');
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('cursorRestore() - Restore position');
   y += 2;
 
-  buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('cursorSave()       - Save cursor position');
-  y += 1;
-
-  buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('cursorRestore()    - Restore cursor position');
-  y += 2;
-
-  // Demo box
-  buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('Demo (watch the asterisk move):');
-  y += 2;
-
+  // Interactive demo box
   final boxX = 5;
   final boxY = y;
   buffer.write(Ansi.cursor(x: boxX, y: boxY));
   buffer.write(Ansi.fgIndex(14));
   buffer.write('┌──────────────┐');
-  buffer.write(Ansi.cursor(x: boxX, y: boxY + 1));
-  buffer.write('│              │');
-  buffer.write(Ansi.cursor(x: boxX, y: boxY + 2));
-  buffer.write('│              │');
-  buffer.write(Ansi.cursor(x: boxX, y: boxY + 3));
-  buffer.write('│              │');
-  buffer.write(Ansi.cursor(x: boxX, y: boxY + 4));
+  for (var i = 1; i <= boxHeight; i++) {
+    buffer.write(Ansi.cursor(x: boxX, y: boxY + i));
+    buffer.write('│              │');
+  }
+  buffer.write(Ansi.cursor(x: boxX, y: boxY + boxHeight + 1));
   buffer.write('└──────────────┘');
   buffer.write(Ansi.reset());
 
-  // Animate cursor movement
-  buffer.write(Ansi.cursorSave());
-  buffer.write(Ansi.cursor(x: boxX + 2, y: boxY + 2));
+  // Draw the movable asterisk
+  buffer.write(Ansi.cursor(x: boxX + starX, y: boxY + starY));
   buffer.write(Ansi.fgIndex(11));
+  buffer.write(Ansi.bold());
   buffer.write('*');
-  buffer.write(Ansi.cursorRestore());
+  buffer.write(Ansi.reset());
+
+  y = boxY + boxHeight + 3;
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write(Ansi.fgIndex(8));
+  buffer.write('Position: ($starX, $starY)');
+  if (moveCount > 0) {
+    buffer.write('  Count: $moveCount');
+  }
+  buffer.write('          '); // Clear any leftover text
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('h/j/k/l = left/down/up/right, prefix with number (e.g. 5j)');
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('s = save position, r = restore position');
+  buffer.write(Ansi.reset());
 }
+
+int savedStarX = 1;
+int savedStarY = 1;
 
 void demoWindowTitle() {
   var y = 4;
@@ -562,16 +585,20 @@ void input(List<int> codes) {
     quit();
   }
 
-  // Navigation
-  if (str == '\x1b[C' || str == 'l' || str == ' ') {
-    // Right arrow, 'l', or space
+  // Navigation with arrow keys
+  if (str == '\x1b[C') {
+    // Right arrow
     currentDemo = (currentDemo + 1) % demos.length;
+    moveCount = 0;
     draw();
+    return;
   }
-  if (str == '\x1b[D' || str == 'h') {
-    // Left arrow or 'h'
+  if (str == '\x1b[D') {
+    // Left arrow
     currentDemo = (currentDemo - 1 + demos.length) % demos.length;
+    moveCount = 0;
     draw();
+    return;
   }
 
   // Cursor style demo
@@ -593,6 +620,69 @@ void input(List<int> codes) {
     } else if (str == 'v') {
       cursorIsVisible = !cursorIsVisible;
       terminal.write(Ansi.cursorVisible(cursorIsVisible));
+    }
+  }
+
+  // Cursor movement demo - interactive asterisk with vim-style hjkl
+  if (currentDemo == 5) {
+    // Check for digit input to build count prefix
+    if (str.length == 1 && str.codeUnitAt(0) >= 48 && str.codeUnitAt(0) <= 57) {
+      final digit = str.codeUnitAt(0) - 48;
+      moveCount = moveCount * 10 + digit;
+      if (moveCount > 99) moveCount = 99; // Cap at 99
+      draw();
+      return;
+    }
+
+    final count = moveCount > 0 ? moveCount : 1;
+    var moved = false;
+
+    if (str == 'k') {
+      // Up (vim k)
+      final newY = (starY - count).clamp(1, boxHeight);
+      if (newY != starY) {
+        starY = newY;
+        moved = true;
+      }
+    } else if (str == 'j') {
+      // Down (vim j)
+      final newY = (starY + count).clamp(1, boxHeight);
+      if (newY != starY) {
+        starY = newY;
+        moved = true;
+      }
+    } else if (str == 'h') {
+      // Left (vim h)
+      final newX = (starX - count).clamp(1, boxWidth);
+      if (newX != starX) {
+        starX = newX;
+        moved = true;
+      }
+    } else if (str == 'l') {
+      // Right (vim l)
+      final newX = (starX + count).clamp(1, boxWidth);
+      if (newX != starX) {
+        starX = newX;
+        moved = true;
+      }
+    } else if (str == 's') {
+      // Save position
+      savedStarX = starX;
+      savedStarY = starY;
+      moveCount = 0;
+      draw();
+      return;
+    } else if (str == 'r') {
+      // Restore position
+      starX = savedStarX;
+      starY = savedStarY;
+      moved = true;
+    }
+
+    if (moved) {
+      moveCount = 0;
+      draw();
+      return;
     }
   }
 
