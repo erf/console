@@ -1,3 +1,6 @@
+## 0.3.0+3
+- simplify example.dart
+
 ## 0.3.0+2
 - new comprehensive ansi_demo example 
 - update README
