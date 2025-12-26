@@ -1,3 +1,7 @@
+## 0.3.0+2
+- new comprehensive ansi_demo example 
+- update README
+
 ## 0.3.0+1
 - improve README
 
