@@ -62,7 +62,7 @@ void main() {
 
 See the `example/` folder for complete examples:
 
-- **example** - Interactive demo with rainbow title and key input
+- **example** - Simple demo with title and key input
 - **ansi_demo** - Comprehensive demo of all ANSI features (colors, styles, cursor, etc.)
 - **sweep** - Minesweeper game
 - **snake** - Classic snake game
