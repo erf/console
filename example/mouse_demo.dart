@@ -45,7 +45,7 @@ void draw() {
   // Instructions
   const instructions = [
     'Click anywhere to move the cursor',
-    'Scroll wheel to see scroll events',
+    'Scroll wheel to see scroll events (including horizontal)',
     'Press q to quit',
   ];
   for (var i = 0; i < instructions.length; i++) {
@@ -94,11 +94,18 @@ void handleInput(List<int> codes) {
     lastEvent = mouse.toString();
 
     if (mouse.isScroll) {
-      // Handle scroll - move cursor up/down
-      if (mouse.scrollDirection == ScrollDirection.up) {
-        cursorY = (cursorY - 1).clamp(1, rows);
-      } else {
-        cursorY = (cursorY + 1).clamp(1, rows);
+      // Handle scroll - move cursor in scroll direction
+      switch (mouse.scrollDirection) {
+        case ScrollDirection.up:
+          cursorY = (cursorY - 1).clamp(1, rows);
+        case ScrollDirection.down:
+          cursorY = (cursorY + 1).clamp(1, rows);
+        case ScrollDirection.left:
+          cursorX = (cursorX - 1).clamp(1, cols);
+        case ScrollDirection.right:
+          cursorX = (cursorX + 1).clamp(1, cols);
+        case null:
+          break;
       }
     } else if (mouse.isPress && mouse.button == MouseButton.left) {
       // Left click - move cursor to click position

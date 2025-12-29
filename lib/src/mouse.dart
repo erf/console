@@ -25,6 +25,12 @@ enum ScrollDirection {
 
   /// Scroll wheel moved down.
   down,
+
+  /// Scroll wheel moved left (horizontal scroll).
+  left,
+
+  /// Scroll wheel moved right (horizontal scroll).
+  right,
 }
 
 /// A parsed mouse event from SGR extended mode (mode 1006).
@@ -151,11 +157,17 @@ class MouseEvent {
 
     if (scrollBit) {
       // Scroll wheel event
+      // buttonBits: 0=up, 1=down, 2=left, 3=right
       isScroll = true;
       button = MouseButton.none;
-      scrollDirection = buttonBits == 0
-          ? ScrollDirection.up
-          : ScrollDirection.down;
+      scrollDirection = switch (buttonBits) {
+        0 => ScrollDirection.up,
+        1 => ScrollDirection.down,
+        2 => ScrollDirection.left,
+        3 => ScrollDirection.right,
+        _ => null,
+      };
+      if (scrollDirection == null) return null;
     } else if (buttonBits == 3) {
       // Button release in X10 mode, or motion without button
       button = MouseButton.none;
