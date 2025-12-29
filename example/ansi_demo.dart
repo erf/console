@@ -30,6 +30,7 @@ final demos = <String>[
   'Text Styles',
   'Cursor Styles',
   'Cursor Movement',
+  'Alt Scroll Mode',
   'Window Title',
   'Clipboard & Query',
 ];
@@ -58,9 +59,16 @@ void drawFooter() {
   buffer.write(Ansi.cursor(x: 1, y: rows));
   buffer.write(Ansi.bgIndex(236));
   buffer.write(Ansi.fgIndex(7));
-  final nav = currentDemo == 5
-      ? ' [←/→] Navigate  [hjkl] Move *  [N+hjkl] Move N  [q] Quit  Demo ${currentDemo + 1}/${demos.length} '
-      : ' [←/→] Navigate  [q] Quit  Demo ${currentDemo + 1}/${demos.length} ';
+  String nav;
+  if (currentDemo == 5) {
+    nav =
+        ' [←/→] Navigate  [hjkl] Move *  [N+hjkl] Move N  [q] Quit  Demo ${currentDemo + 1}/${demos.length} ';
+  } else if (currentDemo == 6) {
+    nav =
+        ' [←/→] Navigate  [Scroll] Test  [q] Quit  Demo ${currentDemo + 1}/${demos.length} ';
+  } else {
+    nav = ' [←/→] Navigate  [q] Quit  Demo ${currentDemo + 1}/${demos.length} ';
+  }
   buffer.write(nav.padRight(cols));
   buffer.write(Ansi.reset());
 }
@@ -433,6 +441,80 @@ void demoCursorMovement() {
 int savedStarX = 1;
 int savedStarY = 1;
 
+bool altScrollEnabled = false;
+List<String> scrollEvents = [];
+
+void demoAltScroll() {
+  var y = 4;
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write(Ansi.fgIndex(15));
+  buffer.write('Alternate Scroll Mode (mode 1007):');
+  buffer.write(Ansi.reset());
+  y += 2;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('When enabled, scroll wheel sends arrow key sequences');
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('instead of scrolling terminal scrollback.');
+  y += 2;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write(Ansi.fgIndex(11));
+  buffer.write('altScroll(bool) - Toggle alternate scroll mode');
+  buffer.write(Ansi.reset());
+  y += 2;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('Status: ');
+  if (altScrollEnabled) {
+    buffer.write(Ansi.fgIndex(10));
+    buffer.write('ENABLED');
+    buffer.write(Ansi.reset());
+    buffer.write(' - scroll wheel sends \\x1b[A / \\x1b[B');
+  } else {
+    buffer.write(Ansi.fgIndex(9));
+    buffer.write('DISABLED');
+    buffer.write(Ansi.reset());
+    buffer.write(' - scroll wheel scrolls scrollback');
+  }
+  y += 2;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('Press ');
+  buffer.write(Ansi.fgIndex(14));
+  buffer.write('SPACE');
+  buffer.write(Ansi.reset());
+  buffer.write(' to toggle alt scroll mode');
+  y += 2;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write(Ansi.fgIndex(8));
+  buffer.write('Received arrow keys (try scrolling when enabled):');
+  buffer.write(Ansi.reset());
+  y += 1;
+
+  // Show last few scroll events
+  final displayEvents = scrollEvents.length > 8
+      ? scrollEvents.sublist(scrollEvents.length - 8)
+      : scrollEvents;
+  for (final event in displayEvents) {
+    buffer.write(Ansi.cursor(x: 5, y: y));
+    buffer.write(Ansi.fgIndex(7));
+    buffer.write(event);
+    buffer.write(Ansi.reset());
+    y += 1;
+  }
+
+  // Clear remaining lines
+  for (var i = displayEvents.length; i < 8; i++) {
+    buffer.write(Ansi.cursor(x: 5, y: y));
+    buffer.write('                              ');
+    y += 1;
+  }
+}
+
 void demoWindowTitle() {
   var y = 4;
   buffer.write(Ansi.cursor(x: 3, y: y));
@@ -531,7 +613,7 @@ void demoClipboardAndQuery() {
   y += 1;
 
   buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write('  alternateScroll(bool)  - Scroll mode (mode 1007)');
+  buffer.write('  altScroll(bool)        - Scroll mode (mode 1007)');
   y += 1;
 
   buffer.write(Ansi.cursor(x: 3, y: y));
@@ -568,8 +650,10 @@ void draw() {
     case 5:
       demoCursorMovement();
     case 6:
-      demoWindowTitle();
+      demoAltScroll();
     case 7:
+      demoWindowTitle();
+    case 8:
       demoClipboardAndQuery();
   }
 
@@ -686,8 +770,30 @@ void input(List<int> codes) {
     }
   }
 
+  // Alt scroll demo
+  if (currentDemo == 6) {
+    if (str == ' ') {
+      // Toggle alt scroll mode
+      altScrollEnabled = !altScrollEnabled;
+      terminal.write(Ansi.altScroll(altScrollEnabled));
+      draw();
+      return;
+    }
+    // Detect arrow keys from scroll wheel (when alt scroll is enabled)
+    if (str == '\x1b[A') {
+      scrollEvents.add('↑ Scroll Up  (\\x1b[A)');
+      draw();
+      return;
+    }
+    if (str == '\x1b[B') {
+      scrollEvents.add('↓ Scroll Down (\\x1b[B)');
+      draw();
+      return;
+    }
+  }
+
   // Window title demo
-  if (currentDemo == 6 && str == 't') {
+  if (currentDemo == 7 && str == 't') {
     titleStep = (titleStep % 3) + 1;
     switch (titleStep) {
       case 1:
@@ -702,7 +808,7 @@ void input(List<int> codes) {
   }
 
   // Clipboard demo
-  if (currentDemo == 7 && str == 'c') {
+  if (currentDemo == 8 && str == 'c') {
     terminal.write(Ansi.copyToClipboard('Hello from ANSI Demo!'));
   }
 }

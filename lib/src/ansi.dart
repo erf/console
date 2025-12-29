@@ -138,10 +138,11 @@ class Ansi {
 
   /// Enable or disable alternate scroll mode (mode 1007).
   ///
-  /// When enabled, the scroll wheel sends up/down arrow key sequences
-  /// instead of scrolling the terminal's scrollback buffer.
-  static String alternateScroll(bool enabled) =>
-      enabled ? '$e[?1007h' : '$e[?1007l';
+  /// When enabled, the mouse scroll wheel sends arrow key escape sequences
+  /// (`\x1b[A` for up, `\x1b[B` for down) instead of scrolling the terminal's
+  /// scrollback buffer. Typically used with [altBuffer] in full-screen apps
+  /// where scrollback is hidden.
+  static String altScroll(bool enabled) => enabled ? '$e[?1007h' : '$e[?1007l';
 
   /// Enable or disable grapheme cluster mode (mode 2027).
   ///

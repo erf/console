@@ -84,6 +84,11 @@ void main() {
       expect(Ansi.altBuffer(false), '\x1b[?1049l');
     });
 
+    test('alt scroll', () {
+      expect(Ansi.altScroll(true), '\x1b[?1007h');
+      expect(Ansi.altScroll(false), '\x1b[?1007l');
+    });
+
     test('window title', () {
       expect(Ansi.setTitle('test'), '\x1b]2;test\x07');
     });
