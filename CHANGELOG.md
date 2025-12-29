@@ -1,3 +1,9 @@
+## 0.3.1
+
+- rename `alternateScroll` to `altScroll` for consistency with `altBuffer`
+- improve `altScroll` documentation
+- add Alt Scroll Mode demo to ansi_demo
+
 ## 0.3.0+4
 
 - update README example
