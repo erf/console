@@ -5,6 +5,7 @@
 /// - [TerminalBase] - Abstract base class for terminal implementations
 /// - [Ansi] - ANSI escape codes for cursor, colors, and text styles
 /// - [Keys] - Common key constants for input handling
+/// - [MouseEvent] - Parsed mouse events for click handling
 /// - [Color] - Standard 16 terminal colors
 /// - [CursorStyle] - Cursor style options
 ///
@@ -13,5 +14,6 @@ library;
 
 export 'src/ansi.dart';
 export 'src/keys.dart';
+export 'src/mouse.dart';
 export 'src/terminal.dart' show Terminal, TerminalBase;
 export 'src/theme_detector.dart';

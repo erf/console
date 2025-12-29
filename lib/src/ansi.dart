@@ -151,6 +151,44 @@ class Ansi {
       enabled ? '$e[?2027h' : '$e[?2027l';
 
   // ─────────────────────────────────────────────────────────────────────────
+  // Mouse tracking
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Enable or disable mouse tracking with SGR extended mode.
+  ///
+  /// When enabled, mouse button press and release events are reported as
+  /// escape sequences that can be parsed with [MouseEvent.tryParse].
+  ///
+  /// Uses SGR extended encoding (mode 1006) which supports coordinates
+  /// beyond column 223 and is supported by all modern terminals.
+  ///
+  /// **Note:** When mouse tracking is enabled, scroll wheel events will be
+  /// reported as mouse events instead of scrolling the terminal buffer.
+  ///
+  /// Example:
+  /// ```dart
+  /// terminal.write(Ansi.mouseMode(true));  // Enable tracking
+  /// // ... handle mouse events ...
+  /// terminal.write(Ansi.mouseMode(false)); // Disable on exit
+  /// ```
+  static String mouseMode(bool enabled) =>
+      enabled ? '$e[?1000h$e[?1006h' : '$e[?1006l$e[?1000l';
+
+  /// Enable or disable drag tracking with SGR extended mode.
+  ///
+  /// Reports mouse movement while a button is held (drag events),
+  /// in addition to press/release. Generates more events than [mouseMode].
+  static String mouseDrag(bool enabled) =>
+      enabled ? '$e[?1002h$e[?1006h' : '$e[?1006l$e[?1002l';
+
+  /// Enable or disable all-motion tracking with SGR extended mode.
+  ///
+  /// Reports all mouse movement, even without buttons pressed.
+  /// Use sparingly as this generates many events.
+  static String mouseAll(bool enabled) =>
+      enabled ? '$e[?1003h$e[?1006h' : '$e[?1006l$e[?1003l';
+
+  // ─────────────────────────────────────────────────────────────────────────
   // Window title
   // ─────────────────────────────────────────────────────────────────────────
 

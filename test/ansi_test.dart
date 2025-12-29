@@ -139,4 +139,21 @@ void main() {
       expect(Ansi.cursorStyle(CursorStyle.steadyBar), '\x1b[6 q');
     });
   });
+
+  group('Mouse tracking tests', () {
+    test('mouseMode enables both tracking and SGR', () {
+      expect(Ansi.mouseMode(true), '\x1b[?1000h\x1b[?1006h');
+      expect(Ansi.mouseMode(false), '\x1b[?1006l\x1b[?1000l');
+    });
+
+    test('mouseDrag enables drag tracking and SGR', () {
+      expect(Ansi.mouseDrag(true), '\x1b[?1002h\x1b[?1006h');
+      expect(Ansi.mouseDrag(false), '\x1b[?1006l\x1b[?1002l');
+    });
+
+    test('mouseAll enables all-motion tracking and SGR', () {
+      expect(Ansi.mouseAll(true), '\x1b[?1003h\x1b[?1006h');
+      expect(Ansi.mouseAll(false), '\x1b[?1006l\x1b[?1003l');
+    });
+  });
 }
