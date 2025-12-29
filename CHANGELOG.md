@@ -1,3 +1,7 @@
+## 0.4.1
+
+- add horizontal scroll support (left/right) to `ScrollDirection` and `MouseEvent`
+
 ## 0.4.0
 
 - add mouse tracking support with SGR extended mode
