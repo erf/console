@@ -1,3 +1,10 @@
+## 0.4.0
+
+- add mouse tracking support with SGR extended mode
+- add `Ansi.mouseMode`, `Ansi.mouseDrag`, `Ansi.mouseAll` methods
+- add `MouseEvent` class for parsing mouse events (clicks, drags, scroll)
+- add mouse_demo example
+
 ## 0.3.1
 
 - rename `alternateScroll` to `altScroll` for consistency with `altBuffer`
