@@ -76,7 +76,7 @@ void drawFooter() {
 void demoStandardColors() {
   var y = 4;
   buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write(Ansi.fg(Color.white));
+  buffer.write(Ansi.fg(.white));
   buffer.write('Standard 16 Colors (Color enum):');
   y += 2;
 
@@ -103,7 +103,7 @@ void demoStandardColors() {
 
   // Color names
   buffer.write(Ansi.cursor(x: 3, y: y));
-  buffer.write(Ansi.fg(Color.brightWhite));
+  buffer.write(Ansi.fg(.brightWhite));
   buffer.write('Color names:');
   y += 1;
   for (var i = 0; i < Color.values.length; i++) {
@@ -688,17 +688,17 @@ void input(List<int> codes) {
   // Cursor style demo
   if (currentDemo == 4) {
     if (str == '1') {
-      terminal.write(Ansi.cursorStyle(CursorStyle.blinkingBlock));
+      terminal.write(Ansi.cursorStyle(.blinkingBlock));
     } else if (str == '2') {
-      terminal.write(Ansi.cursorStyle(CursorStyle.steadyBlock));
+      terminal.write(Ansi.cursorStyle(.steadyBlock));
     } else if (str == '3') {
-      terminal.write(Ansi.cursorStyle(CursorStyle.blinkingUnderline));
+      terminal.write(Ansi.cursorStyle(.blinkingUnderline));
     } else if (str == '4') {
-      terminal.write(Ansi.cursorStyle(CursorStyle.steadyUnderline));
+      terminal.write(Ansi.cursorStyle(.steadyUnderline));
     } else if (str == '5') {
-      terminal.write(Ansi.cursorStyle(CursorStyle.blinkingBar));
+      terminal.write(Ansi.cursorStyle(.blinkingBar));
     } else if (str == '6') {
-      terminal.write(Ansi.cursorStyle(CursorStyle.steadyBar));
+      terminal.write(Ansi.cursorStyle(.steadyBar));
     } else if (str == '0') {
       terminal.write(Ansi.cursorReset());
     } else if (str == 'v') {

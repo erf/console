@@ -23,7 +23,7 @@ void main() {
   terminal.write(Ansi.clearScreen());
 
   // Colors: enum, 256-palette index, or RGB
-  terminal.write(Ansi.fg(Color.cyan));
+  terminal.write(Ansi.fg(.cyan));
   terminal.write(Ansi.fgIndex(208));
   terminal.write(Ansi.fgRgb(255, 128, 0));
 
