@@ -14,6 +14,7 @@ import 'package:termio/termio.dart';
 /// - Terminal modes (alt buffer, alternate scroll, grapheme cluster)
 /// - Window title manipulation
 /// - Clipboard operations (OSC 52)
+/// - Cursor color (OSC 12)
 /// - Background color query
 
 final terminal = Terminal();
@@ -38,6 +39,7 @@ final demos = <String>[
 void quit() {
   buffer.write(Ansi.cursorVisible(true));
   buffer.write(Ansi.cursorReset());
+  buffer.write(Ansi.resetCursorColor());
   buffer.write(Ansi.reset());
   buffer.write(Ansi.altBuffer(false));
   terminal.write(buffer);
@@ -596,6 +598,37 @@ void demoClipboardAndQuery() {
 
   buffer.write(Ansi.cursor(x: 3, y: y));
   buffer.write('  queryBackgroundColor()  - Query terminal background');
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('  queryCursorColor()      - Query cursor color');
+  y += 2;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write(Ansi.fgIndex(11));
+  buffer.write('Cursor Color (OSC 12):');
+  buffer.write(Ansi.reset());
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('  setCursorColor(String)  - Set cursor color (hex/name)');
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('  resetCursorColor()      - Reset to terminal default');
+  y += 1;
+
+  buffer.write(Ansi.cursor(x: 3, y: y));
+  buffer.write('Press 1-4 to change cursor color: ');
+  buffer.write(Ansi.fgIndex(9));
+  buffer.write('1=red ');
+  buffer.write(Ansi.fgIndex(10));
+  buffer.write('2=green ');
+  buffer.write(Ansi.fgIndex(12));
+  buffer.write('3=blue ');
+  buffer.write(Ansi.fgIndex(7));
+  buffer.write('4=reset');
+  buffer.write(Ansi.reset());
   y += 2;
 
   buffer.write(Ansi.cursor(x: 3, y: y));
@@ -810,6 +843,20 @@ void input(List<int> codes) {
   // Clipboard demo
   if (currentDemo == 8 && str == 'c') {
     terminal.write(Ansi.copyToClipboard('Hello from ANSI Demo!'));
+  }
+
+  // Cursor color demo
+  if (currentDemo == 8) {
+    switch (str) {
+      case '1':
+        terminal.write(Ansi.setCursorColor('#ff0000'));
+      case '2':
+        terminal.write(Ansi.setCursorColor('#00ff00'));
+      case '3':
+        terminal.write(Ansi.setCursorColor('#0088ff'));
+      case '4':
+        terminal.write(Ansi.resetCursorColor());
+    }
   }
 }
 
