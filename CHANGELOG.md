@@ -1,3 +1,7 @@
+## 0.4.2
+
+- add cursor color support (OSC 12) with `setCursorColor`, `resetCursorColor`, `queryCursorColor`
+
 ## 0.4.1
 
 - add horizontal scroll support (left/right) to `ScrollDirection` and `MouseEvent`
