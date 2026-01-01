@@ -2,6 +2,7 @@
 ///
 /// Use [Ansi.mouseMode] to enable mouse tracking, then parse incoming
 /// escape sequences with [MouseEvent.tryParse].
+library;
 
 /// Mouse button identifiers.
 enum MouseButton {
