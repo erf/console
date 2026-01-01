@@ -1,3 +1,7 @@
+## 0.4.2+1
+
+- fix dangling library doc comment in mouse.dart
+
 ## 0.4.2
 
 - add cursor color support (OSC 12) with `setCursorColor`, `resetCursorColor`, `queryCursorColor`
