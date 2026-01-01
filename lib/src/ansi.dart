@@ -223,6 +223,32 @@ class Ansi {
   static String queryClipboard() => '$e]52;c;?$bell';
 
   // ─────────────────────────────────────────────────────────────────────────
+  // Cursor color (OSC 12)
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Set the cursor color using OSC 12.
+  ///
+  /// The [color] parameter can be:
+  /// - A color name: `"red"`, `"blue"`, `"green"`, etc.
+  /// - A hex color: `"#RGB"`, `"#RRGGBB"`, `"#RRRRGGGGBBBB"`
+  /// - An RGB spec: `"rgb:RR/GG/BB"` or `"rgb:RRRR/GGGG/BBBB"`
+  ///
+  /// Example:
+  /// ```dart
+  /// terminal.write(Ansi.setCursorColor('#ff0000'));  // Red cursor
+  /// terminal.write(Ansi.setCursorColor('green'));    // Green cursor
+  /// ```
+  static String setCursorColor(String color) => '$e]12;$color$bell';
+
+  /// Reset the cursor color to the terminal default using OSC 112.
+  static String resetCursorColor() => '$e]112$bell';
+
+  /// Query the current cursor color (OSC 12).
+  ///
+  /// The terminal will respond with the current cursor color.
+  static String queryCursorColor() => '$e]12;?$e\\';
+
+  // ─────────────────────────────────────────────────────────────────────────
   // Query
   // ─────────────────────────────────────────────────────────────────────────
 
