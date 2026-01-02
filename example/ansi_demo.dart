@@ -695,23 +695,22 @@ void draw() {
 }
 
 void input(InputEvent event) {
-  // Quit
-  if (event case KeyInputEvent(key: 'q')) {
-    quit();
-  }
-
-  // Navigation with arrow keys
-  if (event case KeyInputEvent(key: 'right')) {
-    currentDemo = (currentDemo + 1) % demos.length;
-    moveCount = 0;
-    draw();
-    return;
-  }
-  if (event case KeyInputEvent(key: 'left')) {
-    currentDemo = (currentDemo - 1 + demos.length) % demos.length;
-    moveCount = 0;
-    draw();
-    return;
+  // Handle navigation and quit
+  switch (event) {
+    case KeyInputEvent(key: 'q'):
+      quit();
+    case KeyInputEvent(key: 'right'):
+      currentDemo = (currentDemo + 1) % demos.length;
+      moveCount = 0;
+      draw();
+      return;
+    case KeyInputEvent(key: 'left'):
+      currentDemo = (currentDemo - 1 + demos.length) % demos.length;
+      moveCount = 0;
+      draw();
+      return;
+    default:
+      break;
   }
 
   // Get raw key for demos that need character input

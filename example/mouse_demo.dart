@@ -81,37 +81,40 @@ void draw() {
 }
 
 void handleInput(InputEvent event) {
-  // Check for quit
-  if (event case KeyInputEvent(key: 'q' || 'Q')) {
-    quit();
+  switch (event) {
+    case KeyInputEvent(key: 'q' || 'Q'):
+      quit();
+    case MouseInputEvent(:final event):
+      handleMouseEvent(event);
+    default:
+      break;
   }
+}
 
-  // Handle mouse events
-  if (event case MouseInputEvent(:final event)) {
-    lastEvent = event.toString();
+void handleMouseEvent(MouseEvent event) {
+  lastEvent = event.toString();
 
-    if (event.isScroll) {
-      // Handle scroll - move cursor in scroll direction
-      switch (event.scrollDirection) {
-        case ScrollDirection.up:
-          cursorY = (cursorY - 1).clamp(1, rows);
-        case ScrollDirection.down:
-          cursorY = (cursorY + 1).clamp(1, rows);
-        case ScrollDirection.left:
-          cursorX = (cursorX - 1).clamp(1, cols);
-        case ScrollDirection.right:
-          cursorX = (cursorX + 1).clamp(1, cols);
-        case null:
-          break;
-      }
-    } else if (event.isPress && event.button == MouseButton.left) {
-      // Left click - move cursor to click position
-      cursorX = event.x.clamp(1, cols);
-      cursorY = event.y.clamp(1, rows);
+  if (event.isScroll) {
+    // Handle scroll - move cursor in scroll direction
+    switch (event.scrollDirection) {
+      case ScrollDirection.up:
+        cursorY = (cursorY - 1).clamp(1, rows);
+      case ScrollDirection.down:
+        cursorY = (cursorY + 1).clamp(1, rows);
+      case ScrollDirection.left:
+        cursorX = (cursorX - 1).clamp(1, cols);
+      case ScrollDirection.right:
+        cursorX = (cursorX + 1).clamp(1, cols);
+      case null:
+        break;
     }
-
-    draw();
+  } else if (event.isPress && event.button == MouseButton.left) {
+    // Left click - move cursor to click position
+    cursorX = event.x.clamp(1, cols);
+    cursorY = event.y.clamp(1, rows);
   }
+
+  draw();
 }
 
 void main() {

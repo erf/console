@@ -32,14 +32,17 @@ void main() {
   terminal.write(Ansi.reset());
 
   terminal.inputEvents.listen((event) {
-    if (event case KeyInputEvent(key: 'q')) {
-      terminal.write(Ansi.cursorVisible(true));
-      terminal.write(Ansi.reset());
-      terminal.write(Ansi.clearScreen());
-      terminal.rawMode = false;
-      exit(0);
-    } else if (event case KeyInputEvent(key: 'up')) {
-      terminal.write('\nUp arrow pressed!');
+    switch (event) {
+      case KeyInputEvent(key: 'q'):
+        terminal.write(Ansi.cursorVisible(true));
+        terminal.write(Ansi.reset());
+        terminal.write(Ansi.clearScreen());
+        terminal.rawMode = false;
+        exit(0);
+      case KeyInputEvent(key: 'up'):
+        terminal.write('\nUp arrow pressed!');
+      default:
+        break;
     }
   });
 
