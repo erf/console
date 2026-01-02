@@ -80,22 +80,19 @@ void draw() {
   buffer.clear();
 }
 
-void handleInput(List<int> codes) {
-  final input = String.fromCharCodes(codes);
-
+void handleInput(InputEvent event) {
   // Check for quit
-  if (input == 'q' || input == 'Q') {
+  if (event case KeyEvent(key: 'q' || 'Q')) {
     quit();
   }
 
-  // Try to parse as mouse event
-  final mouse = MouseEvent.tryParse(input);
-  if (mouse != null) {
-    lastEvent = mouse.toString();
+  // Handle mouse events
+  if (event case MouseInputEvent(:final event)) {
+    lastEvent = event.toString();
 
-    if (mouse.isScroll) {
+    if (event.isScroll) {
       // Handle scroll - move cursor in scroll direction
-      switch (mouse.scrollDirection) {
+      switch (event.scrollDirection) {
         case ScrollDirection.up:
           cursorY = (cursorY - 1).clamp(1, rows);
         case ScrollDirection.down:
@@ -107,10 +104,10 @@ void handleInput(List<int> codes) {
         case null:
           break;
       }
-    } else if (mouse.isPress && mouse.button == MouseButton.left) {
+    } else if (event.isPress && event.button == MouseButton.left) {
       // Left click - move cursor to click position
-      cursorX = mouse.x.clamp(1, cols);
-      cursorY = mouse.y.clamp(1, rows);
+      cursorX = event.x.clamp(1, cols);
+      cursorY = event.y.clamp(1, rows);
     }
 
     draw();
@@ -140,7 +137,7 @@ void main() {
   draw();
 
   // Listen for input
-  terminal.input.listen(handleInput);
+  terminal.inputEvents.listen(handleInput);
 
   // Handle Ctrl+C
   ProcessSignal.sigint.watch().listen((_) => quit());

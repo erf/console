@@ -78,26 +78,25 @@ void draw() {
   buffer.clear();
 }
 
-void onInput(List<int> codes) {
-  final str = String.fromCharCodes(codes);
-  if (str == 'q') {
+void onInput(InputEvent event) {
+  if (event case KeyEvent(key: 'q')) {
     quit();
-  } else if (str == Keys.arrowUp) {
+  } else if (event case KeyEvent(key: 'up')) {
     lastKey = '↑ Up';
     draw();
-  } else if (str == Keys.arrowDown) {
+  } else if (event case KeyEvent(key: 'down')) {
     lastKey = '↓ Down';
     draw();
-  } else if (str == Keys.arrowLeft) {
+  } else if (event case KeyEvent(key: 'left')) {
     lastKey = '← Left';
     draw();
-  } else if (str == Keys.arrowRight) {
+  } else if (event case KeyEvent(key: 'right')) {
     lastKey = '→ Right';
     draw();
-  } else if (str.isNotEmpty) {
+  } else if (event case KeyEvent(:final key)) {
     // Show other printable keys
-    if (codes.length == 1 && codes[0] >= 32 && codes[0] < 127) {
-      lastKey = "'$str'";
+    if (key.length == 1 && key.codeUnitAt(0) >= 32 && key.codeUnitAt(0) < 127) {
+      lastKey = "'$key'";
       draw();
     }
   }
@@ -113,6 +112,6 @@ void main() {
   terminal.rawMode = true;
   terminal.write(Ansi.cursorVisible(false));
   draw();
-  terminal.input.listen(onInput);
+  terminal.inputEvents.listen(onInput);
   terminal.resize.listen(onResize);
 }

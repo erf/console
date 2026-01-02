@@ -694,29 +694,31 @@ void draw() {
   buffer.clear();
 }
 
-void input(List<int> codes) {
-  final str = String.fromCharCodes(codes);
-
+void input(InputEvent event) {
   // Quit
-  if (str == 'q') {
+  if (event case KeyEvent(key: 'q')) {
     quit();
   }
 
   // Navigation with arrow keys
-  if (str == '\x1b[C') {
-    // Right arrow
+  if (event case KeyEvent(key: 'right')) {
     currentDemo = (currentDemo + 1) % demos.length;
     moveCount = 0;
     draw();
     return;
   }
-  if (str == '\x1b[D') {
-    // Left arrow
+  if (event case KeyEvent(key: 'left')) {
     currentDemo = (currentDemo - 1 + demos.length) % demos.length;
     moveCount = 0;
     draw();
     return;
   }
+
+  // Get raw key for demos that need character input
+  final str = switch (event) {
+    KeyEvent(:final raw) => raw,
+    _ => '',
+  };
 
   // Cursor style demo
   if (currentDemo == 4) {
@@ -877,6 +879,6 @@ void main() {
 
   draw();
 
-  terminal.input.listen(input);
+  terminal.inputEvents.listen(input);
   terminal.resize.listen(resize);
 }

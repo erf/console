@@ -92,7 +92,7 @@ void quit() {
   exit(0);
 }
 
-void input(List<int> codes) {
+void input(InputEvent event) {
   done = true;
 }
 
@@ -105,6 +105,6 @@ void tick(Timer t) {
 void main(List<String> arguments) {
   terminal.rawMode = true;
   terminal.write(Ansi.cursorVisible(false));
-  terminal.input.listen(input);
+  terminal.inputEvents.listen(input);
   Timer.periodic(Duration(milliseconds: 200), tick);
 }
