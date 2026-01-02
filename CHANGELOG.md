@@ -1,3 +1,9 @@
+## 0.5.1
+
+- rename `KeyEvent` to `KeyInputEvent` for consistency with `MouseInputEvent`
+- update all examples to use `inputEvents` stream with switch statements
+- update README with new API usage
+
 ## 0.5.0
 
 - add `InputParser` for parsing terminal input into structured events
