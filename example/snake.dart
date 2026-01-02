@@ -307,7 +307,7 @@ void input(List<int> codes) {
   final events = InputParser().parse(codes);
 
   for (final event in events) {
-    if (event is! KeyEvent) continue;
+    if (event is! KeyInputEvent) continue;
 
     switch (event.key) {
       case 'q':

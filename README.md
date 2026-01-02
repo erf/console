@@ -32,13 +32,13 @@ void main() {
   terminal.write(Ansi.reset());
 
   terminal.inputEvents.listen((event) {
-    if (event case KeyEvent(key: 'q')) {
+    if (event case KeyInputEvent(key: 'q')) {
       terminal.write(Ansi.cursorVisible(true));
       terminal.write(Ansi.reset());
       terminal.write(Ansi.clearScreen());
       terminal.rawMode = false;
       exit(0);
-    } else if (event case KeyEvent(key: 'up')) {
+    } else if (event case KeyInputEvent(key: 'up')) {
       terminal.write('\nUp arrow pressed!');
     }
   });
@@ -53,7 +53,7 @@ void main() {
 
 - **Ansi** - Escape codes for cursor, colors, text styles, and terminal modes
 - **Terminal** - Raw mode, terminal size, input stream, resize events
-- **InputParser** - Parse raw terminal input into structured `KeyEvent` and `MouseInputEvent`
+- **InputParser** - Parse raw terminal input into structured `KeyInputEvent` and `MouseInputEvent`
 - **Keys** - Constants for keyboard input (arrows, function keys, ctrl combinations)
 - **MouseEvent** - Parse mouse clicks, drags, and scroll wheel events
 - **Color** - 16 standard colors, 256-color palette, and 24-bit RGB

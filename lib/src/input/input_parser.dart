@@ -5,7 +5,7 @@ import 'package:termio/termio.dart';
 /// Parses raw terminal input into structured InputEvent objects.
 ///
 /// Handles buffering of incomplete escape sequences and converts
-/// raw bytes into KeyEvent and MouseInputEvent objects.
+/// raw bytes into KeyInputEvent and MouseInputEvent objects.
 class InputParser {
   /// Buffer for incomplete escape sequences.
   final _buffer = StringBuffer();
@@ -45,7 +45,7 @@ class InputParser {
 
     // If it's just ESC, return it as escape key
     if (content == Keys.escape) {
-      return [KeyEvent(raw: content, key: 'escape')];
+      return [KeyInputEvent(raw: content, key: 'escape')];
     }
 
     // Otherwise, process whatever we have character by character
@@ -81,7 +81,7 @@ class InputParser {
         }
 
         // Lone ESC not followed by sequence start - treat as escape key
-        events.add(KeyEvent(raw: '\x1b', key: 'escape'));
+        events.add(KeyInputEvent(raw: '\x1b', key: 'escape'));
         pos++;
         continue;
       }
@@ -107,7 +107,7 @@ class InputParser {
     // Check simple sequence lookup
     final simpleKey = EscapeSequences.sequenceToKey[seq];
     if (simpleKey != null) {
-      return KeyEvent(raw: seq, key: simpleKey);
+      return KeyInputEvent(raw: seq, key: simpleKey);
     }
 
     // Parse CSI sequence with potential modifiers
@@ -121,11 +121,11 @@ class InputParser {
     }
 
     // Unknown sequence - return as raw
-    return KeyEvent(raw: seq, key: seq);
+    return KeyInputEvent(raw: seq, key: seq);
   }
 
   /// Parse a CSI sequence (ESC [ ...).
-  KeyEvent _parseCsiSequence(String seq) {
+  KeyInputEvent _parseCsiSequence(String seq) {
     // Format: ESC [ (n ; m)? final
     // Examples: \x1b[A, \x1b[1;5A, \x1b[5~, \x1b[15;2~
 
@@ -171,20 +171,20 @@ class InputParser {
       }
     }
 
-    return KeyEvent(raw: seq, key: key, ctrl: ctrl, alt: alt, shift: shift);
+    return KeyInputEvent(raw: seq, key: key, ctrl: ctrl, alt: alt, shift: shift);
   }
 
   /// Parse an SS3 sequence (ESC O ...).
-  KeyEvent _parseSs3Sequence(String seq) {
+  KeyInputEvent _parseSs3Sequence(String seq) {
     final finalChar = seq[seq.length - 1];
     final key =
         EscapeSequences.csiFinalToKey[finalChar] ??
         EscapeSequences.sequenceToKey[seq] ??
         seq;
-    return KeyEvent(raw: seq, key: key);
+    return KeyInputEvent(raw: seq, key: key);
   }
 
-  /// Convert a single character to a KeyEvent.
+  /// Convert a single character to a KeyInputEvent.
   InputEvent _charToEvent(String char) {
     // Check for control characters
     final code = char.codeUnitAt(0);
@@ -193,26 +193,26 @@ class InputParser {
       // Control character
       switch (code) {
         case 0:
-          return KeyEvent(raw: char, key: 'space', ctrl: true); // Ctrl+Space
+          return KeyInputEvent(raw: char, key: 'space', ctrl: true); // Ctrl+Space
         case 9:
-          return KeyEvent(raw: char, key: 'tab');
+          return KeyInputEvent(raw: char, key: 'tab');
         case 10:
         case 13:
-          return KeyEvent(raw: char, key: 'enter');
+          return KeyInputEvent(raw: char, key: 'enter');
         case 27:
-          return KeyEvent(raw: char, key: 'escape');
+          return KeyInputEvent(raw: char, key: 'escape');
         default:
           // Ctrl+letter: code 1-26 = Ctrl+A-Z
           final letter = String.fromCharCode(code + 96); // a=97, so 1+96=97
-          return KeyEvent(raw: char, key: letter, ctrl: true);
+          return KeyInputEvent(raw: char, key: letter, ctrl: true);
       }
     }
 
     if (code == 127) {
-      return KeyEvent(raw: char, key: 'backspace');
+      return KeyInputEvent(raw: char, key: 'backspace');
     }
 
     // Regular character
-    return KeyEvent.char(char);
+    return KeyInputEvent.char(char);
   }
 }

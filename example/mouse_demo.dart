@@ -82,7 +82,7 @@ void draw() {
 
 void handleInput(InputEvent event) {
   // Check for quit
-  if (event case KeyEvent(key: 'q' || 'Q')) {
+  if (event case KeyInputEvent(key: 'q' || 'Q')) {
     quit();
   }
 

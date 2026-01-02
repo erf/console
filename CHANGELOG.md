@@ -1,7 +1,7 @@
 ## 0.5.0
 
 - add `InputParser` for parsing terminal input into structured events
-- add `InputEvent` sealed class hierarchy with `KeyEvent` and `MouseInputEvent`
+- add `InputEvent` sealed class hierarchy with `KeyInputEvent` and `MouseInputEvent`
 - add `EscapeSequences` constants for common key sequences
 - add `inputEvents` stream to `Terminal` and `TestTerminal`
 - update snake and sweep examples to use the new input system

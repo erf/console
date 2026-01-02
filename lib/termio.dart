@@ -6,7 +6,7 @@
 /// - [Ansi] - ANSI escape codes for cursor, colors, and text styles
 /// - [Keys] - Common key constants for input handling
 /// - [InputParser] - Parse raw input into structured [InputEvent] objects
-/// - [KeyEvent], [MouseInputEvent] - Typed input events
+/// - [KeyInputEvent], [MouseInputEvent] - Typed input events
 /// - [MouseEvent] - Parsed mouse events for click handling
 /// - [Color] - Standard 16 terminal colors
 /// - [CursorStyle] - Cursor style options

@@ -4,7 +4,7 @@ import 'package:termio/termio.dart';
 sealed class InputEvent {}
 
 /// A keyboard input event.
-class KeyEvent extends InputEvent {
+class KeyInputEvent extends InputEvent {
   /// The raw escape sequence or character.
   final String raw;
 
@@ -20,7 +20,7 @@ class KeyEvent extends InputEvent {
   /// Whether Shift modifier was pressed.
   final bool shift;
 
-  KeyEvent({
+  KeyInputEvent({
     required this.raw,
     required this.key,
     this.ctrl = false,
@@ -29,7 +29,7 @@ class KeyEvent extends InputEvent {
   });
 
   /// Create a simple key event for a single character.
-  factory KeyEvent.char(String char) => KeyEvent(raw: char, key: char);
+  factory KeyInputEvent.char(String char) => KeyInputEvent(raw: char, key: char);
 
   @override
   String toString() {
@@ -38,7 +38,7 @@ class KeyEvent extends InputEvent {
       if (alt) 'Alt',
       if (shift) 'Shift',
     ].join('+');
-    return 'KeyEvent(${mods.isNotEmpty ? '$mods+' : ''}$key)';
+    return 'KeyInputEvent(${mods.isNotEmpty ? '$mods+' : ''}$key)';
   }
 }
 

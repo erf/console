@@ -79,21 +79,21 @@ void draw() {
 }
 
 void onInput(InputEvent event) {
-  if (event case KeyEvent(key: 'q')) {
+  if (event case KeyInputEvent(key: 'q')) {
     quit();
-  } else if (event case KeyEvent(key: 'up')) {
+  } else if (event case KeyInputEvent(key: 'up')) {
     lastKey = '↑ Up';
     draw();
-  } else if (event case KeyEvent(key: 'down')) {
+  } else if (event case KeyInputEvent(key: 'down')) {
     lastKey = '↓ Down';
     draw();
-  } else if (event case KeyEvent(key: 'left')) {
+  } else if (event case KeyInputEvent(key: 'left')) {
     lastKey = '← Left';
     draw();
-  } else if (event case KeyEvent(key: 'right')) {
+  } else if (event case KeyInputEvent(key: 'right')) {
     lastKey = '→ Right';
     draw();
-  } else if (event case KeyEvent(:final key)) {
+  } else if (event case KeyInputEvent(:final key)) {
     // Show other printable keys
     if (key.length == 1 && key.codeUnitAt(0) >= 32 && key.codeUnitAt(0) < 127) {
       lastKey = "'$key'";

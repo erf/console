@@ -696,18 +696,18 @@ void draw() {
 
 void input(InputEvent event) {
   // Quit
-  if (event case KeyEvent(key: 'q')) {
+  if (event case KeyInputEvent(key: 'q')) {
     quit();
   }
 
   // Navigation with arrow keys
-  if (event case KeyEvent(key: 'right')) {
+  if (event case KeyInputEvent(key: 'right')) {
     currentDemo = (currentDemo + 1) % demos.length;
     moveCount = 0;
     draw();
     return;
   }
-  if (event case KeyEvent(key: 'left')) {
+  if (event case KeyInputEvent(key: 'left')) {
     currentDemo = (currentDemo - 1 + demos.length) % demos.length;
     moveCount = 0;
     draw();
@@ -716,7 +716,7 @@ void input(InputEvent event) {
 
   // Get raw key for demos that need character input
   final str = switch (event) {
-    KeyEvent(:final raw) => raw,
+    KeyInputEvent(:final raw) => raw,
     _ => '',
   };
 
