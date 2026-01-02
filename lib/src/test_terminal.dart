@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'input/input.dart';
 import 'terminal.dart';
 
 /// A mock terminal for testing purposes.
@@ -32,6 +33,11 @@ class TestTerminal extends TerminalBase {
 
   @override
   Stream<List<int>> get input => _inputController.stream;
+
+  final _parser = InputParser();
+
+  @override
+  late final Stream<InputEvent> inputEvents = input.expand(_parser.parse);
 
   @override
   Stream<ProcessSignal> get resize => _resizeController.stream;

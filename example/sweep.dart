@@ -286,32 +286,36 @@ int neighbourMines(Point<int> p) {
 }
 
 void input(List<int> codes) {
-  final str = String.fromCharCodes(codes);
+  final events = InputParser().parse(codes);
 
-  switch (str) {
-    case 'q':
-      quit();
-    case 'i':
-      showInstructions = !showInstructions;
-    case 'r':
-      init();
-    case 'h':
-    case Keys.arrowLeft:
-      move(Point(-1, 0));
-    case 'j':
-    case Keys.arrowDown:
-      move(Point(0, 1));
-    case 'k':
-    case Keys.arrowUp:
-      move(Point(0, -1));
-    case 'l':
-    case Keys.arrowRight:
-      move(Point(1, 0));
-    case 'f':
-      flag();
-    case 'o':
-    case ' ': // space
-      open();
+  for (final event in events) {
+    if (event is! KeyEvent) continue;
+
+    switch (event.key) {
+      case 'q':
+        quit();
+      case 'i':
+        showInstructions = !showInstructions;
+      case 'r':
+        init();
+      case 'h':
+      case 'left':
+        move(Point(-1, 0));
+      case 'j':
+      case 'down':
+        move(Point(0, 1));
+      case 'k':
+      case 'up':
+        move(Point(0, -1));
+      case 'l':
+      case 'right':
+        move(Point(1, 0));
+      case 'f':
+        flag();
+      case 'o':
+      case ' ':
+        open();
+    }
   }
 
   draw();

@@ -304,58 +304,56 @@ void quit() {
 }
 
 void input(List<int> codes) {
-  final str = String.fromCharCodes(codes);
+  final events = InputParser().parse(codes);
 
-  switch (str) {
-    case 'q':
-      quit();
+  for (final event in events) {
+    if (event is! KeyEvent) continue;
 
-    case 'p':
-      if (state == State.gameOver) {
-        return;
-      }
-      if (state == State.paused) {
-        state = State.playing;
-      } else if (state == State.playing) {
-        state = State.paused;
-      }
-      break;
+    switch (event.key) {
+      case 'q':
+        quit();
 
-    case 'r':
-      init();
-      break;
+      case 'p':
+        if (state == State.gameOver) {
+          return;
+        }
+        if (state == State.paused) {
+          state = State.playing;
+        } else if (state == State.playing) {
+          state = State.paused;
+        }
 
-    case 'h':
-    case Keys.arrowLeft:
-      final d = Point(-1, 0);
-      if (!isZero(dir + d)) {
-        dir = d;
-      }
-      break;
+      case 'r':
+        init();
 
-    case 'j':
-    case Keys.arrowDown:
-      final d = Point(0, 1);
-      if (!isZero(dir + d)) {
-        dir = d;
-      }
-      break;
+      case 'h':
+      case 'left':
+        final d = Point(-1, 0);
+        if (!isZero(dir + d)) {
+          dir = d;
+        }
 
-    case 'k':
-    case Keys.arrowUp:
-      final d = Point(0, -1);
-      if (!isZero(dir + d)) {
-        dir = d;
-      }
-      break;
+      case 'j':
+      case 'down':
+        final d = Point(0, 1);
+        if (!isZero(dir + d)) {
+          dir = d;
+        }
 
-    case 'l':
-    case Keys.arrowRight:
-      final d = Point(1, 0);
-      if (!isZero(dir + d)) {
-        dir = d;
-      }
-      break;
+      case 'k':
+      case 'up':
+        final d = Point(0, -1);
+        if (!isZero(dir + d)) {
+          dir = d;
+        }
+
+      case 'l':
+      case 'right':
+        final d = Point(1, 0);
+        if (!isZero(dir + d)) {
+          dir = d;
+        }
+    }
   }
 }
 
