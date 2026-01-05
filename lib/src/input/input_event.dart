@@ -29,7 +29,8 @@ class KeyInputEvent extends InputEvent {
   });
 
   /// Create a simple key event for a single character.
-  factory KeyInputEvent.char(String char) => KeyInputEvent(raw: char, key: char);
+  factory KeyInputEvent.char(String char) =>
+      KeyInputEvent(raw: char, key: char);
 
   @override
   String toString() {

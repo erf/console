@@ -171,7 +171,13 @@ class InputParser {
       }
     }
 
-    return KeyInputEvent(raw: seq, key: key, ctrl: ctrl, alt: alt, shift: shift);
+    return KeyInputEvent(
+      raw: seq,
+      key: key,
+      ctrl: ctrl,
+      alt: alt,
+      shift: shift,
+    );
   }
 
   /// Parse an SS3 sequence (ESC O ...).
@@ -193,7 +199,11 @@ class InputParser {
       // Control character
       switch (code) {
         case 0:
-          return KeyInputEvent(raw: char, key: 'space', ctrl: true); // Ctrl+Space
+          return KeyInputEvent(
+            raw: char,
+            key: 'space',
+            ctrl: true,
+          ); // Ctrl+Space
         case 9:
           return KeyInputEvent(raw: char, key: 'tab');
         case 10:
