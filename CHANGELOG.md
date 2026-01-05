@@ -1,3 +1,7 @@
+## 0.5.1+1
+
+- dart format
+
 ## 0.5.1
 
 - rename `KeyEvent` to `KeyInputEvent` for consistency with `MouseInputEvent`
