@@ -1,3 +1,7 @@
+## 0.5.2+1
+
+- add tap_game example - click colorful targets before they disappear
+
 ## 0.5.2
 
 - add Shift+Tab (backtab) support with `Keys.shiftTab`
