@@ -1,3 +1,10 @@
+## 0.5.2
+
+- add Shift+Tab (backtab) support with `Keys.shiftTab`
+- add modified arrow key constants (Shift, Alt, Ctrl, Ctrl+Shift)
+- add modified navigation key constants (Home, End, Delete, PageUp, PageDown)
+- add input_demo example for displaying parsed keyboard and mouse events
+
 ## 0.5.1+1
 
 - dart format
