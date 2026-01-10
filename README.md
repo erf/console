@@ -57,7 +57,7 @@ void main() {
 - **Ansi** - Escape codes for cursor, colors, text styles, and terminal modes
 - **Terminal** - Raw mode, terminal size, input stream, resize events
 - **InputParser** - Parse raw terminal input into structured `KeyInputEvent` and `MouseInputEvent`
-- **Keys** - Constants for keyboard input (arrows, function keys, ctrl combinations)
+- **Keys** - Constants for keyboard input (arrows, function keys, ctrl combinations, Shift+Tab, modified arrows)
 - **MouseEvent** - Parse mouse clicks, drags, and scroll wheel events
 - **Color** - 16 standard colors, 256-color palette, and 24-bit RGB
 - **ThemeDetector** - Detect terminal background color for automatic light/dark theme selection
@@ -68,6 +68,7 @@ See the `example/` folder for complete examples:
 
 - **example** - Simple demo with title and key input
 - **ansi_demo** - Comprehensive demo of all ANSI features (colors, styles, cursor, etc.)
+- **input_demo** - Display parsed keyboard and mouse events with modifiers
 - **mouse_demo** - Mouse tracking: click to position cursor, scroll wheel
 - **sweep** - Minesweeper game
 - **snake** - Classic snake game
