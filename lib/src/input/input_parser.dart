@@ -157,6 +157,11 @@ class InputParser {
       // Letter final: \x1b[A or \x1b[1;5A
       key = EscapeSequences.csiFinalToKey[finalChar] ?? seq;
 
+      // Special case: Z is backtab (Shift+Tab) with implicit shift
+      if (finalChar == 'Z') {
+        shift = true;
+      }
+
       if (params.isNotEmpty) {
         final parts = params.split(';');
         if (parts.length > 1) {

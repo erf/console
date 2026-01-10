@@ -105,6 +105,7 @@ class EscapeSequences {
 
   /// Base key for modified arrow/navigation sequences.
   /// \x1b[1;5A -> modifier=5, final=A -> 'up'
+  /// \x1b[Z -> 'tab' with shift (backtab)
   static const csiFinalToKey = <String, String>{
     'A': 'up',
     'B': 'down',
@@ -116,6 +117,7 @@ class EscapeSequences {
     'Q': 'f2',
     'R': 'f3',
     'S': 'f4',
+    'Z': 'tab', // Backtab (Shift+Tab)
   };
 
   /// Maps CSI ~ sequences to keys.

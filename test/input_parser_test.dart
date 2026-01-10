@@ -266,6 +266,16 @@ void main() {
         expect(key.key, 'f1');
         expect(key.shift, true);
       });
+
+      test('parses Shift+Tab (backtab)', () {
+        final events = parser.parseString('\x1b[Z'); // Shift+Tab
+        expect(events.length, 1);
+        final key = events[0] as KeyInputEvent;
+        expect(key.key, 'tab');
+        expect(key.shift, true);
+        expect(key.ctrl, false);
+        expect(key.alt, false);
+      });
     });
 
     group('buffering', () {

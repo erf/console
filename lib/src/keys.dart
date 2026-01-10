@@ -176,4 +176,97 @@ class Keys {
 
   /// F12 key.
   static const f12 = '\x1b[24~';
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Shift+Tab (backtab)
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Shift+Tab (backtab / CBT - Cursor Backward Tabulation).
+  static const shiftTab = '\x1b[Z';
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Modified arrow keys
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Shift+Up arrow.
+  static const shiftArrowUp = '\x1b[1;2A';
+
+  /// Shift+Down arrow.
+  static const shiftArrowDown = '\x1b[1;2B';
+
+  /// Shift+Right arrow.
+  static const shiftArrowRight = '\x1b[1;2C';
+
+  /// Shift+Left arrow.
+  static const shiftArrowLeft = '\x1b[1;2D';
+
+  /// Alt+Up arrow.
+  static const altArrowUp = '\x1b[1;3A';
+
+  /// Alt+Down arrow.
+  static const altArrowDown = '\x1b[1;3B';
+
+  /// Alt+Right arrow.
+  static const altArrowRight = '\x1b[1;3C';
+
+  /// Alt+Left arrow.
+  static const altArrowLeft = '\x1b[1;3D';
+
+  /// Ctrl+Up arrow.
+  static const ctrlArrowUp = '\x1b[1;5A';
+
+  /// Ctrl+Down arrow.
+  static const ctrlArrowDown = '\x1b[1;5B';
+
+  /// Ctrl+Right arrow.
+  static const ctrlArrowRight = '\x1b[1;5C';
+
+  /// Ctrl+Left arrow.
+  static const ctrlArrowLeft = '\x1b[1;5D';
+
+  /// Ctrl+Shift+Up arrow.
+  static const ctrlShiftArrowUp = '\x1b[1;6A';
+
+  /// Ctrl+Shift+Down arrow.
+  static const ctrlShiftArrowDown = '\x1b[1;6B';
+
+  /// Ctrl+Shift+Right arrow.
+  static const ctrlShiftArrowRight = '\x1b[1;6C';
+
+  /// Ctrl+Shift+Left arrow.
+  static const ctrlShiftArrowLeft = '\x1b[1;6D';
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Modified navigation keys
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Shift+Home.
+  static const shiftHome = '\x1b[1;2H';
+
+  /// Shift+End.
+  static const shiftEnd = '\x1b[1;2F';
+
+  /// Ctrl+Home.
+  static const ctrlHome = '\x1b[1;5H';
+
+  /// Ctrl+End.
+  static const ctrlEnd = '\x1b[1;5F';
+
+  /// Ctrl+Shift+Home.
+  static const ctrlShiftHome = '\x1b[1;6H';
+
+  /// Ctrl+Shift+End.
+  static const ctrlShiftEnd = '\x1b[1;6F';
+
+  /// Shift+Delete.
+  static const shiftDelete = '\x1b[3;2~';
+
+  /// Ctrl+Delete.
+  static const ctrlDelete = '\x1b[3;5~';
+
+  /// Ctrl+PageUp.
+  static const ctrlPageUp = '\x1b[5;5~';
+
+  /// Ctrl+PageDown.
+  static const ctrlPageDown = '\x1b[6;5~';
 }
