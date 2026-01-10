@@ -73,3 +73,4 @@ See the `example/` folder for complete examples:
 - **sweep** - Minesweeper game
 - **snake** - Classic snake game
 - **life** - Conway's Game of Life
+- **tap_game** - Click colorful targets before they disappear
